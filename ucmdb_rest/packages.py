@@ -9,7 +9,7 @@ UCMDB server.
 
 import requests
 
-from .utils import _url
+from .utils import _url, requires_version
 
 def deletePackage(ucmdb_server, token, package):
     """
@@ -240,21 +240,24 @@ def filterPackage(ucmdb_server, token, package):
     )
     return requests.get(myUrl, headers=token, verify=False)
 
-def getContentPacks(ucmdb_server, token):
+@requires_version("2023.05")
+def getContentPacks(token, udserver):
     """
     Get the content packs from the UCMDB server.
 
     This function makes a GET request to the UCMDB server to retrieve
     information about the deployed content packs.
 
+    Minimum UCMDB Version: 2023.05
+
     Parameters
     ----------
-    ucmdb_server : str
-        UCMDB Server to connect to.
     token : dict
         Authentication token created by calling the function
         'createHeaders' with arguments of ucmdb_user, ucmdb_pass,
         and ucmdb_server.
+    udserver : str
+        UCMDB Server to connect to.
 
     Returns
     -------
@@ -285,7 +288,7 @@ def getContentPacks(ucmdb_server, token):
         ]
     """
     return requests.get(
-        _url(ucmdb_server, '/packagemanager/contentpacks'),
+        _url(udserver, '/packagemanager/contentpacks'),
         headers=token,
         verify=False
     )
@@ -370,12 +373,15 @@ def getPackage(token, udserver, pkg_name='A10_vthunder.zip'):
     return requests.get(_url(udserver, '/packagemanager/packages/' + pkg_name),
                         headers=token, verify=False)
 
+@requires_version("2023.05")
 def getPackages(token, udserver):
     """
     Retrieves a list of packages from the UCMDB server.
 
     This method makes a GET request to the UCMDB server to retrieve a list
     of packages.
+
+    Minimum UCMDB Version: 2023.05
 
     Parameters
     ----------

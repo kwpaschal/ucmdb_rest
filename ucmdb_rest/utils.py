@@ -15,6 +15,8 @@ Split Utilities into separate file
 import requests
 import sys
 import json
+from functools import wraps
+from typing import Dict
 
 def addCIQuestions():
     """
@@ -53,13 +55,13 @@ def addCIQuestions():
             shouldVerify)
 
 
-def authenticate(user, passwd, udserver, ssl=False):
+def authenticate(user, passwd, udserver, ssl=False, port=8443):
     """
     Authenticates a user with a POST call to the UCMDB server.
 
-    This function uses the `_url` method to construct the URL for 
-    connecting to the UCMDB server. SSL is parameterized as False 
-    by default but can be set to True if SSL certificate validation 
+    This function uses the `_url` method to construct the URL for
+    connecting to the UCMDB server. SSL is parameterized as False
+    by default but can be set to True if SSL certificate validation
     is required.
 
     Parameters
@@ -72,6 +74,9 @@ def authenticate(user, passwd, udserver, ssl=False):
         UCMDB server IP or hostname.
     ssl : bool, optional
         Whether to validate the SSL certificate. Defaults to False.
+    port : int, optional
+        The port number for UCMDB server. Defaults to 8443.
+        Common ports: 443 (containerized), 8443 (traditional), 9443.
 
     Returns
     -------
@@ -81,12 +86,15 @@ def authenticate(user, passwd, udserver, ssl=False):
     Raises
     ------
     requests.exceptions.ConnectionError
-        If the UCMDB server is not installed or not running, this error 
+        If the UCMDB server is not installed or not running, this error
         is caught and a message is printed.
 
     Example
     -------
     >>> response = authenticate('admin', 'password', '127.0.0.1', ssl=True)
+    >>> response.status_code
+    200
+    >>> response = authenticate('admin', 'password', 'container.example.com', port=443)
     >>> response.status_code
     200
     """
@@ -96,7 +104,7 @@ def authenticate(user, passwd, udserver, ssl=False):
         'clientContext': '1'
     }
     try:
-        return requests.post(_url(udserver, '/authenticate'), json=payload,
+        return requests.post(_url(udserver, '/authenticate', port=port), json=payload,
                              verify=ssl)
     except requests.exceptions.ConnectionError:
         print('Server is either not installed or not running')
@@ -127,7 +135,7 @@ def _url(udserver, path, port=8443):
     return 'https://' + udserver + ':' + str(port) + '/rest-api' + path
 
 
-def createHeaders(uduser, udpass, udsystem):
+def createHeaders(uduser, udpass, udsystem, port=8443):
     """
     Creates a header for the UCMDB server.
 
@@ -139,6 +147,9 @@ def createHeaders(uduser, udpass, udsystem):
         UCMDB Password.
     udsystem : str
         UCMDB Server hostname/IPV4.
+    port : int, optional
+        The port number for UCMDB server. Defaults to 8443.
+        Common ports: 443 (containerized), 8443 (traditional), 9443.
 
     Returns
     -------
@@ -153,7 +164,7 @@ def createHeaders(uduser, udpass, udsystem):
         If the user is not authorized, prints a message with the text
         of the rejection and exits the system.
     """
-    r = authenticate(uduser, udpass, udsystem)
+    r = authenticate(uduser, udpass, udsystem, port=port)
     data = r.json()
     if r.status_code == 200:
         token_data = 'Bearer ' + data['token']
@@ -178,6 +189,9 @@ def getLicenseReport(token, udserver):
 
     This method makes a GET request to the UCMDB server to fetch license
     information.
+
+    Minimum UCMDB Version: 2023.05
+    Note: Decorator not applied (defined later in this file)
 
     Parameters
     ----------
@@ -280,6 +294,9 @@ def getUCMDBVersion(token, udserver):
     This method makes a GET request to the UCMDB server to fetch version
     information.
 
+    Minimum UCMDB Version: 2023.05
+    Note: Decorator not applied (defined later in this file)
+
     Parameters
     ----------
     token : dict
@@ -314,6 +331,9 @@ def ping(udserver, restrictToWriter=False, restrictToReader=False):
 
     This method makes a GET request to the UCMDB server to show connection
     information.
+
+    Minimum UCMDB Version: 2023.05
+    Note: Decorator not applied (defined later in this file)
 
     Parameters
     ----------
@@ -432,3 +452,223 @@ addCiPrompt = (
     "Enter '1' to show an example of a valid CI string\n"
     "Use an empty string to accept a default value:"
 )
+
+
+# ============================================================================
+# Version Checking Infrastructure
+# ============================================================================
+
+class UCMDBVersionError(Exception):
+    """
+    Exception raised when a function is called on a UCMDB version that
+    doesn't support it.
+
+    Attributes
+    ----------
+    message : str
+        Explanation of the error including required and actual versions.
+    """
+    pass
+
+
+# Global cache for UCMDB versions by server
+_version_cache: Dict[str, str] = {}
+
+
+def _normalize_version(version_str: str) -> tuple:
+    """
+    Normalizes a UCMDB version string to a comparable tuple.
+
+    Handles both formats:
+    - YYYY.MM format (e.g., "2023.05", "2023.08") - represents calendar year.month
+    - YY.M format (e.g., "23.4", "24.2", "25.4") - represents release year.quarter
+
+    UCMDB uses two different versioning schemes:
+    - YYYY.MM: Calendar-based (2023.05 = May 2023, 2023.08 = Aug 2023)
+    - YY.Q: Quarterly releases (23.4 = Q4 2023, 24.2 = Q2 2024)
+      where Q1=Jan, Q2=Apr, Q3=Jul, Q4=Oct
+
+    Parameters
+    ----------
+    version_str : str
+        The version string to normalize.
+
+    Returns
+    -------
+    tuple
+        A tuple of (year, month_or_quarter, is_quarterly) for comparison.
+        The third element distinguishes between the two formats.
+
+    Examples
+    --------
+    >>> _normalize_version("2023.05")
+    (2023, 5, False)
+    >>> _normalize_version("23.4")
+    (2023, 10, True)
+    >>> _normalize_version("24.2")
+    (2024, 4, True)
+    """
+    parts = version_str.split('.')
+    year = int(parts[0])
+    second_part = int(parts[1])
+
+    # Determine if this is YYYY.MM or YY.Q format
+    if year >= 1000:
+        # YYYY.MM format (calendar-based)
+        return (year, second_part, False)
+    else:
+        # YY.Q format (quarterly releases)
+        # Convert YY to YYYY
+        year += 2000
+
+        # Convert quarter to month: Q1=1, Q2=4, Q3=7, Q4=10
+        quarter_to_month = {1: 1, 2: 4, 3: 7, 4: 10}
+        month = quarter_to_month.get(second_part, second_part)
+
+        return (year, month, True)
+
+
+def compare_versions(current: str, required: str) -> bool:
+    """
+    Compares two UCMDB version strings.
+
+    Handles both UCMDB versioning schemes:
+    - YYYY.MM (calendar-based): 2023.05 = May 2023, 2023.08 = Aug 2023
+    - YY.Q (quarterly): 23.4 = Q4 2023 (Oct), 24.2 = Q2 2024 (Apr)
+
+    Parameters
+    ----------
+    current : str
+        The current UCMDB version (e.g., from getUCMDBVersion).
+    required : str
+        The required minimum version.
+
+    Returns
+    -------
+    bool
+        True if current >= required, False otherwise.
+
+    Examples
+    --------
+    >>> compare_versions("24.2", "23.4")
+    True
+    >>> compare_versions("23.4", "24.2")
+    False
+    >>> compare_versions("23.4", "2023.05")  # Oct 2023 > May 2023
+    True
+    >>> compare_versions("2023.05", "23.4")  # May 2023 < Oct 2023
+    False
+    >>> compare_versions("24.2", "2023.05")  # Apr 2024 > May 2023
+    True
+    """
+    current_tuple = _normalize_version(current)
+    required_tuple = _normalize_version(required)
+    return current_tuple >= required_tuple
+
+
+def _get_cached_version(token: dict, udserver: str) -> str:
+    """
+    Retrieves the UCMDB version from cache or fetches it from the server.
+
+    Parameters
+    ----------
+    token : dict
+        Authentication token from createHeaders.
+    udserver : str
+        UCMDB server hostname or IP.
+
+    Returns
+    -------
+    str
+        The UCMDB version string (e.g., "24.2", "2023.05").
+    """
+    if udserver not in _version_cache:
+        version_response = getUCMDBVersion(token, udserver)
+        if version_response.status_code == 200:
+            version_data = version_response.json()
+            # Extract version - could be in different formats
+            full_version = version_data.get('fullServerVersion', '')
+            content_pack_version = version_data.get('contentPackVersion', '')
+
+            # Use contentPackVersion as it matches the release format (e.g., "24.2")
+            _version_cache[udserver] = content_pack_version if content_pack_version else full_version
+        else:
+            raise UCMDBVersionError(
+                f"Failed to retrieve UCMDB version from {udserver}. "
+                f"Status code: {version_response.status_code}"
+            )
+
+    return _version_cache[udserver]
+
+
+def requires_version(min_version: str):
+    """
+    Decorator to enforce minimum UCMDB version requirements for API functions.
+
+    This decorator checks if the UCMDB server version meets the minimum
+    requirement before executing the function. If the version is too old,
+    it raises a UCMDBVersionError.
+
+    Parameters
+    ----------
+    min_version : str
+        The minimum UCMDB version required (e.g., "24.2", "2023.05").
+
+    Returns
+    -------
+    function
+        The decorated function with version checking.
+
+    Raises
+    ------
+    UCMDBVersionError
+        If the UCMDB server version is older than the required version.
+
+    Examples
+    --------
+    >>> @requires_version("24.2")
+    ... def getPackages(token, udserver):
+    ...     return requests.get(_url(udserver, '/packages'), headers=token)
+
+    Notes
+    -----
+    - The decorated function MUST have 'token' and 'udserver' as the first
+      two parameters (in that order).
+    - Version information is cached per server to minimize API calls.
+    - To bypass version checking for testing, users can clear the cache
+      and mock getUCMDBVersion.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(token, udserver, *args, **kwargs):
+            # Get the current UCMDB version (cached)
+            try:
+                current_version = _get_cached_version(token, udserver)
+            except Exception as e:
+                # If we can't get the version, log a warning but allow the call
+                print(f"Warning: Could not verify UCMDB version: {e}")
+                print("Proceeding with function call anyway...")
+                return func(token, udserver, *args, **kwargs)
+
+            # Compare versions
+            if not compare_versions(current_version, min_version):
+                raise UCMDBVersionError(
+                    f"Function '{func.__name__}' requires UCMDB version {min_version} or later. "
+                    f"Your UCMDB server ({udserver}) is running version {current_version}."
+                )
+
+            # Version check passed, execute the function
+            return func(token, udserver, *args, **kwargs)
+
+        return wrapper
+    return decorator
+
+
+def clear_version_cache():
+    """
+    Clears the global version cache.
+
+    Useful for testing or when connecting to a server that has been upgraded.
+    """
+    global _version_cache
+    _version_cache.clear()

@@ -281,8 +281,16 @@ def retrieveIdentificationRule(token, udserver, cit ='node', verify_flag=False):
 
     Returns
     -------
-    str
-        The reconciliation rule in XML format.  for example:
+    requests.Response
+        The response object containing the class model information.
+        To get the decoded identification rule XML, use:
+        ```python
+        response = retrieveIdentificationRule(token, udserver, 'node')
+        data = response.json()
+        xml = convertFromBase64(data["identification"]["ruleXml"])
+        ```
+
+        Example XML format:
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <identification-config type="location" description="Location is identified by a combination of (Name, LocationType) or (Name, CloudLocationType). Two similarly identified locations will be considered different entities if they are contained in different locations.">
                 <identification-criteria>
@@ -309,9 +317,7 @@ def retrieveIdentificationRule(token, udserver, cit ='node', verify_flag=False):
     """
     #build requested attribute into the call
     call = '/classModel/citypes/'+cit+'?withAffectedResources=false'
-    my_output = requests.get(_url(udserver,call), headers=token, verify=verify_flag).json()
-    my_return_value = (convertFromBase64(my_output["identification"]["ruleXml"]))
-    return(my_return_value)
+    return requests.get(_url(udserver,call), headers=token, verify=verify_flag)
 
 def updateCI(token, udserver, id_to_update, update_ci, verify_flag=False):
     """

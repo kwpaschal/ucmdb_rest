@@ -1,6 +1,8 @@
 from .utils import (
     createHeaders, getUCMDBVersion, runMethod, ping, getLicenseReport,
-    addCiPrompt, addCIQuestions
+    addCiPrompt, addCIQuestions,
+    # Version checking utilities
+    UCMDBVersionError, requires_version, compare_versions, clear_version_cache
 )
 
 from .policies import (
