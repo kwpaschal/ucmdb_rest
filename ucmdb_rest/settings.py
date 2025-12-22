@@ -10,6 +10,7 @@ This library contains methods use for settings and reipient manager
 import requests
 
 from .utils import _url
+from . import config
 
 def addRecipients(token, udserver, recipient_dict):
     """
@@ -52,7 +53,7 @@ def addRecipients(token, udserver, recipient_dict):
     """
     return requests.post(_url(udserver, '/administration/recipients'), 
                          headers=token, json=recipient_dict, 
-                         verify=False)
+                         verify=config.get_verify_ssl())
 
 def deleteRecipients(token, udserver, id_to_delete):
     """
@@ -79,7 +80,7 @@ def deleteRecipients(token, udserver, id_to_delete):
 
     """
     myUrl = _url(udserver, f'/administration/recipients?ids={id_to_delete}')
-    return requests.delete(myUrl, headers=token, verify=False)
+    return requests.delete(myUrl, headers=token, verify=config.get_verify_ssl())
 
 def getRecipients(token, udserver):
     """
@@ -118,7 +119,7 @@ def getRecipients(token, udserver):
             ]
     """
     return requests.get(_url(udserver, '/administration/recipients'), 
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 def getSetting(token, udserver, setting, locale='en'):
     """
@@ -168,7 +169,7 @@ def getSetting(token, udserver, setting, locale='en'):
         }
     """
     return requests.get(_url(udserver, '/settings/' + setting), 
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 def setSetting(token, udserver, setting, body, locale='en'):
     """
@@ -218,7 +219,7 @@ def setSetting(token, udserver, setting, body, locale='en'):
             }
     """
     return requests.put(_url(udserver, '/settings/' + setting), 
-                        headers=token, json=body, verify=False)
+                        headers=token, json=body, verify=config.get_verify_ssl())
 
 def updateRecipients(token, udserver, id_to_update, dict_to_update):
     """
@@ -270,4 +271,4 @@ def updateRecipients(token, udserver, id_to_update, dict_to_update):
     """
     myUrl = _url(udserver, f'/administration/recipients/{id_to_update}')
     return requests.put(myUrl, headers=token, json=dict_to_update, 
-                        verify=False)
+                        verify=config.get_verify_ssl())

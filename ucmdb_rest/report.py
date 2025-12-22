@@ -13,6 +13,7 @@ from urllib.parse import quote
 import requests
 
 from .utils import _url
+from . import config
 
 def changeReportsAll(token, udserver, toTime, fromTime, view):
     """
@@ -66,7 +67,7 @@ def changeReportsAll(token, udserver, toTime, fromTime, view):
                    encoded_filter + '&dateFrom=' + str(fromTime) + '&dateTo=' + str(toTime) +
                    '&start=1&pageSize=100')
     #print('URL is:', the_url)
-    return requests.get(the_url, headers=token, verify=False)
+    return requests.get(the_url, headers=token, verify=config.get_verify_ssl())
 
 def changeReportsBlacklist(token, udserver, toTime, fromTime, view):
     """
@@ -145,7 +146,7 @@ def changeReportsBlacklist(token, udserver, toTime, fromTime, view):
         _url(udserver, '/changeReports/generate/blacklist'),
         headers=token,
         json=body_json,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def changeReportsWhitelist(token, udserver, toTime, fromTime, view): 
@@ -223,5 +224,5 @@ def changeReportsWhitelist(token, udserver, toTime, fromTime, view):
         _url(udserver, '/changeReports/generate/whitelist'),
         headers=token,
         json=body_json,
-        verify=False
+        verify=config.get_verify_ssl()
     )

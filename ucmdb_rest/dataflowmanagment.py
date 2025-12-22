@@ -8,6 +8,7 @@ Created on Wed Jun  5 15:27:49 2024
 import requests
 
 from .utils import _url
+from . import config
 
 def addRange(token, udserver, range_to_add, probe_name):
     """
@@ -51,7 +52,7 @@ def addRange(token, udserver, range_to_add, probe_name):
     """
     return requests.post(_url(udserver, '/dataflowmanagement/probes/' +
                               probe_name + '/ranges'), headers=token,
-                         json=range_to_add, verify=False)
+                         json=range_to_add, verify=config.get_verify_ssl())
 
 def checkCredential (token, udserver, credential_id, probe, ip_addr,tout):
     """
@@ -87,7 +88,7 @@ def checkCredential (token, udserver, credential_id, probe, ip_addr,tout):
     }
     print()
     print('Please be patient for the configured timeout,',timeout,' seconds.')
-    return requests.post(_url(udserver,'/dataflowmanagement/credentials/'+credential_id+'/availability'),headers=token, json=body_json, verify=False)
+    return requests.post(_url(udserver,'/dataflowmanagement/credentials/'+credential_id+'/availability'),headers=token, json=body_json, verify=config.get_verify_ssl())
 
 def createNTCMDCredential(token, udserver, my_protocol):
     """
@@ -115,7 +116,7 @@ def createNTCMDCredential(token, udserver, my_protocol):
         "10_1_CMS"
     """
     return requests.post(_url(udserver, '/dataflowmanagement/credentials'),
-                         headers=token, json=my_protocol, verify=False)
+                         headers=token, json=my_protocol, verify=config.get_verify_ssl())
 
 def deleteProbe (token, udserver, probe_names):
     """
@@ -148,7 +149,7 @@ def deleteProbe (token, udserver, probe_names):
             base_url += f'probenames={probe_names[i]}'
         else:
             base_url += f'&probenames={probe_names[i]}'
-    return requests.delete(base_url, headers=token, verify=False)
+    return requests.delete(base_url, headers=token, verify=config.get_verify_ssl())
 
 def deleteRange(token, udserver, delete_range, probe_name):
     """
@@ -190,7 +191,7 @@ def deleteRange(token, udserver, delete_range, probe_name):
         _url(udserver, '/dataflowmanagement/probes/' + probe_name + '/ranges'),
         json=delete_range,
         headers=token,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 
@@ -229,7 +230,7 @@ def do_availability_check(token, udserver, ci_to_check, probe):
         _url(udserver, url_to_run), 
         headers=token, 
         json=json_body, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getAllDomains(token, udserver):
@@ -267,7 +268,7 @@ def getAllDomains(token, udserver):
         ]
     """
     return requests.get(_url(udserver, '/dataflowmanagement/domains'),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 def getAllCredentials(token, udserver):
     """
@@ -337,7 +338,7 @@ def getAllCredentials(token, udserver):
     """
     return requests.get(
         _url(udserver, '/dataflowmanagement/credentials'),
-        headers=token, verify=False
+        headers=token, verify=config.get_verify_ssl()
     )
 
 def getAllProtocols(token, udserver):
@@ -407,7 +408,7 @@ def getAllProtocols(token, udserver):
     """
     return requests.get(
         _url(udserver, '/dataflowmanagement/protocols'),
-        headers=token, verify=False
+        headers=token, verify=config.get_verify_ssl()
     )
 
 def getCredentialProfiles(token, udserver):
@@ -464,7 +465,7 @@ def getCredentialProfiles(token, udserver):
     """
     return requests.get(
         _url(udserver, '/discovery/credentialprofiles'),
-        headers=token, verify=False
+        headers=token, verify=config.get_verify_ssl()
     )
 
 def getProbeInfo(token, udserver):
@@ -512,7 +513,7 @@ def getProbeInfo(token, udserver):
     """
     return requests.get(
         _url(udserver, '/dataflowmanagement/probes'),
-        headers=token, verify=False
+        headers=token, verify=config.get_verify_ssl()
     )
 
 def getProbeRanges(token, probeName, udserver):
@@ -571,7 +572,7 @@ def getProbeRanges(token, probeName, udserver):
     probeURL = '/dataflowmanagement/probes/' + probeName
     return requests.get(
         _url(udserver, probeURL),
-        headers=token, verify=False
+        headers=token, verify=config.get_verify_ssl()
     )
 
 def getProtocol(token, udserver, protocol_id):
@@ -728,7 +729,7 @@ def getProtocol(token, udserver, protocol_id):
     """
     return requests.get(
         _url(udserver, '/dataflowmanagement/protocols/' + protocol_id),
-        headers=token, verify=False
+        headers=token, verify=config.get_verify_ssl()
     )
 
 def probeStatus(token, udserver):
@@ -795,7 +796,7 @@ def probeStatus(token, udserver):
 
     """
     return requests.get(_url(udserver, '/uiserver/probeService/dashboard/summary'
-                             ), headers=token, verify=False)
+                             ), headers=token, verify=config.get_verify_ssl())
 
 def probeStatusDetails(token, udserver, domain, probe):
     """
@@ -915,7 +916,7 @@ def probeStatusDetails(token, udserver, domain, probe):
              f'/uiserver/probeService/dashboard/domain/{domain}/probe/{probe}/runtime'
         ), 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def queryIPs(token, udserver, ip_addr):
@@ -974,5 +975,5 @@ def queryIPs(token, udserver, ip_addr):
              f'/dataflowmanagement/probes?queriedIpAddress={ip_addr}'
         ), 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )

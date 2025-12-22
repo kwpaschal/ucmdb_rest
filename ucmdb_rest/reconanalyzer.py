@@ -9,6 +9,7 @@ This library contains methods to work with the reconciliation analyzer.
 import requests
 
 from .utils import _url
+from . import config
 
 def reconAnalyzerByName(token, udserver, ci):
     """
@@ -64,7 +65,7 @@ def reconAnalyzerByName(token, udserver, ci):
     return requests.get(
         _url(udserver, '/v1/recon-analyzer/ci?name=' + ci), 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def reconAnalyzerOperationByID(token, udserver, ci_id):
@@ -137,7 +138,7 @@ def reconAnalyzerOperationByID(token, udserver, ci_id):
     return requests.get(
         _url(udserver, '/v1/recon-analyzer/operation/ci/' + ci_id), 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def reconAnalyzerMatchReason(token, udserver, opid, ciid):
@@ -174,5 +175,5 @@ def reconAnalyzerMatchReason(token, udserver, opid, ciid):
              '/v1/recon-analyzer/reconDetails/' + str(opid) + '/' + str(ciid)
         ), 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )

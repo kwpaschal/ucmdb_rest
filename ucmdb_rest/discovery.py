@@ -12,6 +12,7 @@ import requests
 from urllib.parse import quote
 
 from .utils import _url
+from . import config
 
 def createJobGroup(token, udserver, job_group):
     """
@@ -91,7 +92,7 @@ def createJobGroup(token, udserver, job_group):
         _url(udserver, '/discovery/discoveryprofiles'),
         headers=token, 
         json=job_group, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def deleteSpecificJobGroup(token, udserver, job_group):
@@ -127,7 +128,7 @@ def deleteSpecificJobGroup(token, udserver, job_group):
     return requests.delete(
         _url(udserver, '/discovery/discoveryprofiles/' + job_group),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getIPRange(token, udserver):
@@ -182,7 +183,7 @@ def getIPRange(token, udserver):
     return requests.get(
         _url(udserver, '/discovery/iprangeprofiles'),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getIPRangeForIP(token, udserver, ipaddr):
@@ -224,7 +225,7 @@ def getIPRangeForIP(token, udserver, ipaddr):
     return requests.get(
         _url(udserver, '/discovery/iprangeprofiles?ipaddress=' + str(ipaddr)),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getJobGroup(token, udserver, fields =''):
@@ -325,7 +326,7 @@ def getJobGroup(token, udserver, fields =''):
     return requests.get(
         myUrl, 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getJobMetaData(token, udserver):
@@ -437,7 +438,7 @@ def getJobMetaData(token, udserver):
     return requests.get(
         _url(udserver, '/discovery/discoverymetadata/jobmetadata'),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getModuleTree(token, udserver):
@@ -503,7 +504,7 @@ def getModuleTree(token, udserver):
     return requests.get(
         _url(udserver, '/discovery/discoverymetadata/moduletree'),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getQuestions(token, udserver, job_name):
@@ -660,7 +661,7 @@ def getQuestions(token, udserver, job_name):
         _url(udserver, 
              '/discovery/discoverymeta/tags/questions?jobNames=' + job_name),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getSchedules(token, udserver):
@@ -729,7 +730,7 @@ def getSchedules(token, udserver):
     return requests.get(
         _url(udserver, '/discovery/scheduleprofiles'), 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getSpecificJobGroup(token, udserver, job_group):
@@ -798,7 +799,7 @@ def getSpecificJobGroup(token, udserver, job_group):
     return requests.get(
         _url(udserver, '/discovery/discoveryprofiles/' + str(job_group)),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getUseCase(token, udserver):
@@ -867,5 +868,5 @@ def getUseCase(token, udserver):
     return requests.get(
         _url(udserver, '/discovery/discoverymetadata/usecases'),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )

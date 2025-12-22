@@ -9,6 +9,7 @@ import requests
 import base64
 
 from .utils import _url
+from . import config
 
 def convertFromBase64(stringToDecode):
     """
@@ -30,10 +31,9 @@ def convertFromBase64(stringToDecode):
     decoded_string = sample_string_bytes.decode("utf-8")
     return(decoded_string)
 
-def addCIs(token, udserver, ciToCreate, isGlobalId=False, 
-           forceTemporaryID=False, ignoreExisting=False, 
-           returnIdsMap=False, ignoreWhenCantIdentify=False, 
-           verify_flag=False):
+def addCIs(token, udserver, ciToCreate, isGlobalId=False,
+           forceTemporaryID=False, ignoreExisting=False,
+           returnIdsMap=False, ignoreWhenCantIdentify=False):
     """
     Adds a given bulk of CIs which are defined outside this
     method.
@@ -151,16 +151,15 @@ def addCIs(token, udserver, ciToCreate, isGlobalId=False,
 
     """
     return requests.post(
-        _url(udserver, '/dataModel?isGlobalId=' + str(isGlobalId) + 
-             '&forceTemporaryId=' + str(forceTemporaryID) + 
-             '&ignoreExisting=' + str(ignoreExisting) + 
-             '&returnIdsMap=' + str(returnIdsMap) + 
-             '&ignoreWhenCantIdentify=' + str(ignoreWhenCantIdentify)), 
-        headers=token, json=ciToCreate, verify=verify_flag
+        _url(udserver, '/dataModel?isGlobalId=' + str(isGlobalId) +
+             '&forceTemporaryId=' + str(forceTemporaryID) +
+             '&ignoreExisting=' + str(ignoreExisting) +
+             '&returnIdsMap=' + str(returnIdsMap) +
+             '&ignoreWhenCantIdentify=' + str(ignoreWhenCantIdentify)),
+        headers=token, json=ciToCreate, verify=config.get_verify_ssl()
     )
 
-def deleteCIs(token, udserver, id_to_delete, isGlobalId=False, 
-              verify_flag=False):
+def deleteCIs(token, udserver, id_to_delete, isGlobalId=False):
     """
     Deletes a CI by its ID by making a delete request via the
     REST API.
@@ -197,11 +196,11 @@ def deleteCIs(token, udserver, id_to_delete, isGlobalId=False,
 
     """
     return requests.delete(
-        _url(udserver, '/dataModel/ci/' + id_to_delete), 
-        headers=token, verify=verify_flag
+        _url(udserver, '/dataModel/ci/' + id_to_delete),
+        headers=token, verify=config.get_verify_ssl()
     )
 
-def getClass(token, udserver, CIT, verify_flag=False):
+def getClass(token, udserver, CIT):
     """
     Retrieves the definition of a class (CI Type) from the UCMDB server.
 
@@ -259,9 +258,9 @@ def getClass(token, udserver, CIT, verify_flag=False):
     'node'
     """
     return requests.get(_url(udserver, '/classModel/citypes/' + CIT),
-                        headers=token, verify=verify_flag)
+                        headers=token, verify=config.get_verify_ssl())
 
-def retrieveIdentificationRule(token, udserver, cit ='node', verify_flag=False):
+def retrieveIdentificationRule(token, udserver, cit='node'):
     """
     Issues a REST API get call to show the identification rule for a CI Type
 
@@ -317,9 +316,9 @@ def retrieveIdentificationRule(token, udserver, cit ='node', verify_flag=False):
     """
     #build requested attribute into the call
     call = '/classModel/citypes/'+cit+'?withAffectedResources=false'
-    return requests.get(_url(udserver,call), headers=token, verify=verify_flag)
+    return requests.get(_url(udserver,call), headers=token, verify=config.get_verify_ssl())
 
-def updateCI(token, udserver, id_to_update, update_ci, verify_flag=False):
+def updateCI(token, udserver, id_to_update, update_ci):
     """
     Updates a CI by ID via a PUT REST API call.
 
@@ -353,6 +352,6 @@ def updateCI(token, udserver, id_to_update, update_ci, verify_flag=False):
         }
     """
     return requests.put(
-        _url(udserver, '/dataModel/ci/' + id_to_update), 
-        headers=token, json=update_ci, verify=verify_flag
+        _url(udserver, '/dataModel/ci/' + id_to_update),
+        headers=token, json=update_ci, verify=config.get_verify_ssl()
     )

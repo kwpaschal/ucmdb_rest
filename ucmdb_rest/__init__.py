@@ -1,3 +1,7 @@
+from .config import (
+    set_verify_ssl, get_verify_ssl
+)
+
 from .utils import (
     createHeaders, getUCMDBVersion, runMethod, ping, getLicenseReport,
     addCiPrompt, addCIQuestions,

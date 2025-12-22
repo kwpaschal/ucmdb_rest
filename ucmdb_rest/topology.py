@@ -7,6 +7,7 @@ This library contains imports for topology methods.
 """
 import requests
 from .utils import _url
+from . import config
 
 
 def getChunk(token, udserver, res_id, index):
@@ -81,7 +82,7 @@ def getChunk(token, udserver, res_id, index):
     return requests.get(
         _url(udserver, f'/topology/result/{res_id}/{index}'),
         headers=token,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getChunkForPath(token: dict, udserver: str, state: str, execution_id: str, 
@@ -133,7 +134,7 @@ def getChunkForPath(token: dict, udserver: str, state: str, execution_id: str,
         _url(udserver, '/uiserver/modeling/views/result/chunkForPath'),
         headers=token, 
         json=body, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 
@@ -227,6 +228,6 @@ def runView(token, udserver, view, includeEmptyLayout=False, chunkSize=10000):
         _url(udserver, url),
         headers=token,
         json=view,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 

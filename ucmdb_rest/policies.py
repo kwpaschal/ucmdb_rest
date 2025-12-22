@@ -10,6 +10,7 @@ import requests
 from urllib.parse import quote
 
 from .utils import _url
+from . import config
 
 def calculateComplianceView(token, udserver, myDict):
     """
@@ -44,7 +45,7 @@ def calculateComplianceView(token, udserver, myDict):
     200
     """
     return requests.post(_url(udserver, '/policy/calculate?chunckSize=300'),
-                         json=myDict, headers=token, verify=False)
+                         json=myDict, headers=token, verify=config.get_verify_ssl())
 
 def calculateView(token, udserver, view):
     """
@@ -91,7 +92,7 @@ def calculateView(token, udserver, view):
     """
     encoded_view = quote(view)
     return requests.post(_url(udserver, '/uiserver/modeling/views/' + encoded_view),
-                         headers=token, verify=False, json={})
+                         headers=token, verify=config.get_verify_ssl(), json={})
 
 def getComplainceViews(token, udserver):
     """
@@ -131,7 +132,7 @@ def getComplainceViews(token, udserver):
     >>> Kubernetes statefulset must have pod Kubernetes StatefulSet ['Kubernetes statefulset must have pod']
     """
     return requests.get(_url(udserver, '/policy/complianceViews'),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 def getNonCompliant(token, udserver, execution_id, chunk):
     """
@@ -177,7 +178,7 @@ def getNonCompliant(token, udserver, execution_id, chunk):
         "chunkNumber": chunk
     }
     return requests.post(_url(udserver, '/policy/chunkForPath?chunkSize=300'),
-                         headers=token, json=body, verify=False)
+                         headers=token, json=body, verify=config.get_verify_ssl())
 
 def getNumberOfElements(token, udserver, payload):
     """
@@ -213,7 +214,7 @@ def getNumberOfElements(token, udserver, payload):
     >>> 200
     """
     return requests.post(_url(udserver, '/uiserver/modeling/views/result/numberOfElementsForPath'),
-                         headers=token, json=payload, verify=False)
+                         headers=token, json=payload, verify=config.get_verify_ssl())
 
 
 def getPolicies(token, udserver):
@@ -253,7 +254,7 @@ def getPolicies(token, udserver):
     Kubernetes must have pod Query/Policy/Cloud Compliance/Kubernetes False
     """
     return requests.get(_url(udserver, '/policy/policies'),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
     
 def getSpecificComplianceView(token, udserver, cv):
     """
@@ -299,4 +300,4 @@ def getSpecificComplianceView(token, udserver, cv):
     """
     the_name = quote(cv)
     return requests.get(_url(udserver, '/policy/complianceView/' + the_name),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())

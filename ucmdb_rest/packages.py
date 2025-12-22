@@ -10,6 +10,7 @@ UCMDB server.
 import requests
 
 from .utils import _url, requires_version
+from . import config
 
 def deletePackage(ucmdb_server, token, package):
     """
@@ -70,7 +71,7 @@ def deletePackage(ucmdb_server, token, package):
     return requests.delete(
         _url(ucmdb_server, '/packagemanager/packages/' + package),
         headers=token,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 
@@ -141,7 +142,7 @@ def deployPackage(ucmdb_server, token, filestoupload, package_name):
         _url(ucmdb_server, '/packagemanager/packages'),
         files=files_uploaded,
         headers=token,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def exportPackage(ucmdb_server, token, package_name):
@@ -172,7 +173,7 @@ def exportPackage(ucmdb_server, token, package_name):
         '/uiserver/packagemanager/resources/export?packageName=',
         package_name
     )
-    return requests.get(myUrl, headers=token, verify=False)
+    return requests.get(myUrl, headers=token, verify=config.get_verify_ssl())
 
 def filterPackage(ucmdb_server, token, package):
     """
@@ -238,7 +239,7 @@ def filterPackage(ucmdb_server, token, package):
         package,
         '&filter'
     )
-    return requests.get(myUrl, headers=token, verify=False)
+    return requests.get(myUrl, headers=token, verify=config.get_verify_ssl())
 
 @requires_version("2023.05")
 def getContentPacks(token, udserver):
@@ -290,7 +291,7 @@ def getContentPacks(token, udserver):
     return requests.get(
         _url(udserver, '/packagemanager/contentpacks'),
         headers=token,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getDiffReport(ucmdb_server, token, cpversion):
@@ -324,7 +325,7 @@ def getDiffReport(ucmdb_server, token, cpversion):
             '/packagemanager/contentpacks/' + cpversion + '/diffreport'
         ),
         headers=token,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getPackage(token, udserver, pkg_name='A10_vthunder.zip'):
@@ -371,7 +372,7 @@ def getPackage(token, udserver, pkg_name='A10_vthunder.zip'):
     >>>     print("  Last Modified Time:", resource['updateTime'])
     """
     return requests.get(_url(udserver, '/packagemanager/packages/' + pkg_name),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 @requires_version("2023.05")
 def getPackages(token, udserver):
@@ -434,7 +435,7 @@ def getPackages(token, udserver):
 
     """
     return requests.get(_url(udserver, '/packagemanager/packages'),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 def getProgress(ucmdb_server, token, package):
     '''
@@ -460,7 +461,7 @@ def getProgress(ucmdb_server, token, package):
         _url(ucmdb_server, 
              '/packagemanager/packages/' + package + '/progress'),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getSpecificContentPack(ucmdb_server, token, cpversion):
@@ -490,7 +491,7 @@ def getSpecificContentPack(ucmdb_server, token, cpversion):
         _url(ucmdb_server, 
              '/packagemanager/contentpacks/' + cpversion),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def uploadContentPack(ucmdb_server, token, filestoupload, cp_name):
@@ -528,7 +529,7 @@ def uploadContentPack(ucmdb_server, token, filestoupload, cp_name):
         myUrl, 
         files=files_uploaded, 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 

@@ -11,6 +11,7 @@ UCMDB server.
 import requests
 
 from .utils import _url
+from . import config
 
 def getIntegrationDetails(token, udserver, integrationpoint, detail ='false'):
     """
@@ -137,7 +138,7 @@ def getIntegrationDetails(token, udserver, integrationpoint, detail ='false'):
         _url(udserver, '/integration/integrationpoints/' +
              str(integrationpoint) + '?detail=' + detail),
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def getIntegrationInfo(token, udserver):
@@ -212,5 +213,5 @@ def getIntegrationInfo(token, udserver):
     return requests.get(
         _url(udserver, '/integration/integrationpoints'), 
         headers=token, 
-        verify=False
+        verify=config.get_verify_ssl()
     )

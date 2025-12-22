@@ -12,6 +12,7 @@ management zones.
 import requests
 
 from .utils import _url
+from . import config
 
 def activateZone(token, udserver, zone_id):
     """
@@ -46,7 +47,7 @@ def activateZone(token, udserver, zone_id):
     200
     """
     return requests.patch(_url(udserver, '/discovery/managementzones/' + zone_id +
-                               '?operation=activate'), headers=token, verify=False)
+                               '?operation=activate'), headers=token, verify=config.get_verify_ssl())
 
 def createManagementZone(token, udserver, mgmtZone):
     """
@@ -117,7 +118,7 @@ def createManagementZone(token, udserver, mgmtZone):
         _url(udserver, 'discovery/managementzones'),
         headers=token, 
         json=mgmtZone, 
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 def deleteManagementZone(token, udserver, zone_id):
@@ -153,7 +154,7 @@ def deleteManagementZone(token, udserver, zone_id):
     200
     """
     return requests.delete(_url(udserver, '/discovery/managementzones/' + zone_id),
-                           headers=token, verify=False)
+                           headers=token, verify=config.get_verify_ssl())
 
 def getMgmtZone(token, udserver):
     """
@@ -204,7 +205,7 @@ def getMgmtZone(token, udserver):
 
     """
     return requests.get(_url(udserver, '/discovery/managementzones'),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 
 def getSpecificMgmtZone(token, udserver, zone_id):
@@ -261,7 +262,7 @@ def getSpecificMgmtZone(token, udserver, zone_id):
                 
     """
     return requests.get(_url(udserver, '/discovery/managementzones/' + zone_id),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())
 
 def getStatisticsForZone(token, udserver, zone_id):
     """
@@ -296,4 +297,4 @@ def getStatisticsForZone(token, udserver, zone_id):
     >>> 200
     """
     return requests.get(_url(udserver, '/discovery/results/statistics' + '?mzoneId=' + zone_id),
-                        headers=token, verify=False)
+                        headers=token, verify=config.get_verify_ssl())

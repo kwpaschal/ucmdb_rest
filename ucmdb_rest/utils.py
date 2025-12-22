@@ -17,6 +17,7 @@ import sys
 import json
 from functools import wraps
 from typing import Dict
+from . import config
 
 def addCIQuestions():
     """
@@ -282,7 +283,7 @@ def getLicenseReport(token, udserver):
     return requests.get(
         _url(udserver, '/uiserver/license/report'),
         headers=token,
-        verify=False
+        verify=config.get_verify_ssl()
     )
 
 
@@ -320,8 +321,8 @@ def getUCMDBVersion(token, udserver):
     """
     return requests.get(
         _url(udserver, '/v1/uiserver/dashboard/versions/getVersion'),
-        headers=token, 
-        verify=False
+        headers=token,
+        verify=config.get_verify_ssl()
     )
 
 
@@ -364,7 +365,7 @@ def ping(udserver, restrictToWriter=False, restrictToReader=False):
         '/ping?restrictToWriter=' + str(restrictToWriter) +
         '&restrictToReader=' + str(restrictToReader)
     )
-    return requests.get(url, verify=False)
+    return requests.get(url, verify=config.get_verify_ssl())
 
 
 def runMethod(method, *args, print_debug=True, **kwargs):

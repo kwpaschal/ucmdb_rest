@@ -8,6 +8,7 @@ Created on Wed Jun  5 16:11:06 2024
 import requests
 
 from .utils import _url
+from . import config
 
 def exposeCI(token, udserver, json_to_expose, verification_flag=False):
     print(json_to_expose)

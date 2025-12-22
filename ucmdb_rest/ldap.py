@@ -11,6 +11,7 @@ UCMDB server.
 import requests
 
 from .utils import _url
+from . import config
 
 def getLDAPSettings(token, udserver):
     """
@@ -94,4 +95,4 @@ def getLDAPSettings(token, udserver):
             }
         ]
     """
-    return requests.get(_url(udserver, '/ldap/settings'), headers=token, verify=False)
+    return requests.get(_url(udserver, '/ldap/settings'), headers=token, verify=config.get_verify_ssl())
