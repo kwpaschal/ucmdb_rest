@@ -13,6 +13,7 @@ from .policies import Policies
 from .topology import Topology
 from .discovery import Discovery
 from .exposeCI import ExposeCI
+from .integration import Integrations
 
 class UCMDBAuthError(Exception):
     """
@@ -37,6 +38,7 @@ class UCMDBServer:
         self.topology = Topology(self)
         self.discovery = Discovery(self)
         self.expose = ExposeCI(self)
+        self.integration = Integrations(self)
     
     
     def _authenticate(self, user,password,client_context):
