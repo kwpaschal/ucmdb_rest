@@ -14,6 +14,7 @@ from .topology import Topology
 from .discovery import Discovery
 from .exposeCI import ExposeCI
 from .integration import Integrations
+from .ldap import RetrieveLDAP
 
 class UCMDBAuthError(Exception):
     """
@@ -39,6 +40,7 @@ class UCMDBServer:
         self.discovery = Discovery(self)
         self.expose = ExposeCI(self)
         self.integration = Integrations(self)
+        self.ldap = RetrieveLDAP(self)
     
     
     def _authenticate(self, user,password,client_context):
