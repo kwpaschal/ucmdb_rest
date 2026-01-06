@@ -1,28 +1,77 @@
-# UCMDB REST
+# UCMDB REST Python Library
 
->This is documentation for the Universal Configuration Management Database (UCMDB) Rest API library.  This library is to be used by python 3.6 or higher to interact with the UCMDB Server REST API.  It provides wrapper functions and sample code for interacting with UCMDB.
+A modern, object-oriented Python 3.6+ wrapper for the OpenText Universal Configuration Management Database (UCMDB) REST API. This library centralizes UCMDB interactions through a unified client, providing type-safe Enums and automated pagination.
 
-# Modules
+## Quick Start
 
-* dataflowmanagement: functions related to data flow managment endpoints
-* datamodel: functions related to the datamodel endpoints
-* discovery: functions related to discovery endpoints
-* exposeCI: functions related to showing information about configuration items (CIs)
-* integration: functions related to integration points
-* ldap: functions related to Lightweight Directory Access Protocol(LDAP)
-* mgmtzone: functions related to legacy UCMDB management zones
-* packages: functions related to the package management endpoints
-* policies: functions related to the policy endpoints
-* reconanalyzer: functions related to the reconciliation analyzer
-* report: functions related to built-in reports (not custom reports)
-* settings: functions related to settings endpoints
-* topology: functions related to topology endpoints
-* utils: functions used by other scripts
+The library uses a central `UCMDBClient` to manage authentication and session persistence. All sub-modules are accessible as attributes of the client.
 
-# Release History
+```python
+from ucmdb_rest.client import UCMDBClient
+from ucmdb_rest.policies import ComplianceStatus
 
-* 1.0.0
-    * First release
-* 1.1.0
-  * Fixed the return types in the doc strings to requests.Response
+# Initialize connection
+client = UCMDBClient(
+    base_url="[https://ucmdb.example.com:8443/rest-api](https://ucmdb.example.com:8443/rest-api)", 
+    username="admin", 
+    password="password"
+)
 
+# Run a Policy Audit with automatic chunking
+view_name = "Node Compliance View"
+results = client.policies.getAllResultsForPath(
+    view_name, 
+    status_type=ComplianceStatus.NON_COMPLIANT
+)
+
+print(f"Retrieved {len(results)} non-compliant CIs.")
+
+## Functional Modules
+
+The library is organized into specialized modules to mirror the UCMDB API ecosystem:
+
+| Module | Description |
+| :--- | :--- |
+| **datamodel** | CRUD operations for Configuration Items (CIs) and Relations. |
+| **policies** | Policy calculation, compliance views, and automated result chunking. |
+| **topology** | TQL execution, ad-hoc queries, and fetching CI attributes. |
+| **discovery** | Management of discovery jobs, probe status, and results. |
+| **packages** | Deployment and management of UCMDB Content Packs. |
+| **utils** | Shared helper functions, including URL encoding via `urllib.parse.quote`. |
+
+## Development and Testing
+
+We use `pytest` for functional validation. To run the suite:
+
+```bash
+# Run all tests
+pytest
+
+# Run a specific test with stdout enabled
+pytest -s tests/test_policies.py
+
+# Run a specific test with stdout enabled
+pytest -s tests/test_policies.py
+
+## Additional Documentation
+
+Detailed guides and historical context can be found in the `docs/` directory:
+* **IMPLEMENTATION_SUMMARY.md**: Historical technical overview of the API integration.
+* **TODO.md**: Active roadmap and upcoming feature tracking.
+
+## Release History
+
+* **1.2.0 (Current)**
+  * Major refactor to Object-Oriented architecture.
+  * Added `ComplianceStatus` Enum for type-safety.
+  * Implemented `getAllResultsForPath` automated pagination logic.
+* **1.1.0**
+  * Standardized docstrings to return `requests.Response` objects.
+* **1.0.0**
+  * Initial library release.
+
+## Verification
+
+* **MIT License**: Included in `setup.py`.
+* **Dependencies**: `requests~=2.31.0` in `install_requires`.
+* **Clean Root**: Legacy `.md` files moved to `/docs`.

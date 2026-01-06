@@ -27,3 +27,9 @@ ucmdb_rest/discovery/
 
 # Claude Code internal files
 .claude/
+
+# Testing
+.pytest_cache/
+
+# UCMDB Credentials for testsd
+tests/credentials.json
