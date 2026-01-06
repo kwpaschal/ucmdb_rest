@@ -10,6 +10,7 @@ import requests
 from .dataflowmanagement import DataFlowManagement
 from .datamodel import DataModel
 from .policies import Policies
+from .topology import Topology
 
 class UCMDBAuthError(Exception):
     """
@@ -31,6 +32,7 @@ class UCMDBServer:
         self.dataflowmanagement = DataFlowManagement(self)
         self.datamodel = DataModel(self)
         self.policies = Policies(self)
+        self.topology = Topology(self)
     
     
     def _authenticate(self, user,password,client_context):
