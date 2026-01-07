@@ -15,6 +15,7 @@ from .discovery import Discovery
 from .exposeCI import ExposeCI
 from .integration import Integrations
 from .ldap import RetrieveLDAP
+from .mgmtzone import ManagementZones
 
 class UCMDBAuthError(Exception):
     """
@@ -41,6 +42,7 @@ class UCMDBServer:
         self.expose = ExposeCI(self)
         self.integration = Integrations(self)
         self.ldap = RetrieveLDAP(self)
+        self.mgmt_zones = ManagementZones(self)
     
     
     def _authenticate(self, user,password,client_context):
