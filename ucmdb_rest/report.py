@@ -9,7 +9,6 @@ UCMDB server.
 """
 
 from urllib.parse import quote
-import json
 from unittest.mock import MagicMock
 
 class Reports:
