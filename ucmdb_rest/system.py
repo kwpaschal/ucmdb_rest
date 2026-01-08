@@ -1,0 +1,162 @@
+# -*- coding: utf-8 -*-
+"""
+This is a file for a few system level utilities which we can run and are nice to have around.
+
+@author: kpaschal
+"""
+
+class System:
+    def __init__(self, client):
+        """
+        Initialize the service with a reference to the main level UCMDB client
+        """
+        self.client = client
+    
+    def getUCMDBVersion(self):
+        """
+        Retrieves the UCMDB version from the REST API endpoint for the UCMDB
+        server dashboard.
+
+        This method makes a GET request to the UCMDB server to fetch version
+        information.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        requests.Response
+            Can be converted to a dictionary with version information. For example:
+            {
+                "productName": "Universal CMDB",
+                "serverBuildNumber": "232",
+                "contentPackBuildNumber": "67",
+                "contentPackVersion": "24.2",
+                "fullServerVersion": "11.8.0"
+            }
+        """
+        url = f'{self.client.base_url}/v1/uiserver/dashboard/versions/getVersion'
+        return self.client.session.get(url)
+
+    def ping(self, restrictToWriter=False, restrictToReader=False):
+        """
+        Tests connectivity to UCMDB.
+
+        This method makes a GET request to the UCMDB server to show connection
+        information.
+
+        Parameters
+        ----------
+        restrictToWriter : bool, optional
+            When set to True, only if the server is a writer will this return
+            a valid status. Default is False.
+        restrictToReader : bool, optional
+            When set to True, only if the server is a reader will this return
+            a valid status. Default is False.
+
+        Returns
+        -------
+        requests.Response
+            Can be converted to a dictionary with status information. For example:
+            {
+                "status": {
+                    "statusCode": 200,
+                    "reasonPhrase": "OK",
+                    "message": "FullyUp, is writer: true"
+                }
+            }
+        """
+        url = f'{self.client.root_url}/ping?restrictToWriter={restrictToWriter}&restrictToReader={restrictToReader}'
+        return self.client.session.get(url)
+
+    def getLicenseReport(self):
+        """
+        Retrieves the UCMDB license report from UCMDB.
+
+        This method makes a GET request to the UCMDB server to fetch license
+        information.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        requests.Response
+            Can be converted to a dictionary with license information. For example:
+            {
+                "fullServerCount": 693,
+                "fullWorkstationCount": 3,
+                "fullNetworkCount": 0,
+                "fullStorageCount": 0,
+                "fullDockerCount": 0,
+                "basicServerCount": 12,
+                "basicWorkstationCount": 1,
+                "basicNetworkCount": 0,
+                "basicStorageCount": 0,
+                "basicDockerCount": 0,
+                "operationalServerCount": 0,
+                "operationalWorkstationCount": 0,
+                "operationalNetworkCount": 0,
+                "operationalStorageCount": 0,
+                "operationalDockerCount": 0,
+                "usedUnit": "694.6",
+                "totalLicenseUnit": 1000,
+                "totalMDR": 20,
+                "usedMDR": 0,
+                "totalCM": 0,
+                "usedCM": 0,
+                "totalPremium": 0,
+                "totalAsset": 0,
+                "consumedAsset": 0,
+                "consumedPremium": 0,
+                "usedManagement": 0,
+                "usedPremium": 0,
+                "usedAsset": 0,
+                "customerID": 0,
+                "consumedCIs": 0,
+                "maxCIs": 0,
+                "usedProbes": 0,
+                "maxProbes": 0,
+                "allowBuffer": 0.0,
+                "remainingDays": 394,
+                "licenseDetailsCollection": [
+                    {
+                        "description": "UCMDB Third Party Integration per MDR",
+                        "licenseType": "TERM",
+                        "expirationDate": 1752191999000,
+                        "startDate": 1712665737000,
+                        "capacity": 20,
+                        "remainingDaysUntilExpireTime": "394",
+                        "customerLicenseFeatures": {
+                            "10398": 20
+                        },
+                        "active": true,
+                        "formatExpirationDate": "7/10/25 4:59 PM",
+                        "formatStartDate": "4/9/24 5:28 AM"
+                    },
+                    {
+                        "description": "Universal Discovery per Unit V2",
+                        "licenseType": "TERM",
+                        "expirationDate": 1752191999000,
+                        "startDate": 1712665693000,
+                        "capacity": 1000,
+                        "remainingDaysUntilExpireTime": "394",
+                        "customerLicenseFeatures": {
+                            "100787": 1000,
+                            "10831": 1
+                        },
+                        "active": true,
+                        "formatExpirationDate": "7/10/25 4:59 PM",
+                        "formatStartDate": "4/9/24 5:28 AM"
+                    }
+                ],
+                "operational": false,
+                "saminventory": false,
+                "ucmdbfoundation": true,
+                "rationOfManagementToAsset": 20
+            }
+        """
+        url = f'{self.client.base_url}/uiserver/license/report'
+        return self.client.session.get(url)

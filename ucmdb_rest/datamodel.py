@@ -7,9 +7,6 @@ Created on Wed Jun  5 15:05:19 2024
 
 import base64
 
-from .utils import _url
-from . import config
-
 class DataModel:
     def __init__(self, client):
         """

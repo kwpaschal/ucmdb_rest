@@ -18,6 +18,8 @@ from .ldap import RetrieveLDAP
 from .mgmtzone import ManagementZones
 from .report import Reports
 from .settings import Settings
+from .packages import Packages
+from .system import System
 
 class UCMDBAuthError(Exception):
     """
@@ -28,6 +30,7 @@ class UCMDBAuthError(Exception):
 class UCMDBServer:
     def __init__(self,user,password,server,port=8443,protocol='https',ssl_validation=False,client_context=1):
         self.base_url = f'{protocol}://{server}:{port}/rest-api'
+        self.root_url = f'{protocol}://{server}:{port}'
         self.client_context = client_context
         self.session = requests.Session()
         self.session.verify = ssl_validation
@@ -47,6 +50,8 @@ class UCMDBServer:
         self.mgmt_zones = ManagementZones(self)
         self.reports = Reports(self)
         self.settings = Settings(self)
+        self.packages = Packages(self)
+        self.system = System(self)
     
     
     def _authenticate(self, user,password,client_context):
