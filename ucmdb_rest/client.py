@@ -17,6 +17,7 @@ from .integration import Integrations
 from .ldap import RetrieveLDAP
 from .mgmtzone import ManagementZones
 from .report import Reports
+from .settings import Settings
 
 class UCMDBAuthError(Exception):
     """
@@ -45,6 +46,7 @@ class UCMDBServer:
         self.ldap = RetrieveLDAP(self)
         self.mgmt_zones = ManagementZones(self)
         self.reports = Reports(self)
+        self.settings = Settings(self)
     
     
     def _authenticate(self, user,password,client_context):
