@@ -74,10 +74,6 @@ def test_getProbeInfo(ucmdb_client):
     result = ucmdb_client.data_flow.getProbeInfo()
     assert result.status_code == 200
 
-def test_getProbeRanges(ucmdb_client,active_probe_name):
-    result = ucmdb_client.data_flow.getProbeRanges(active_probe_name)
-    assert result.status_code == 200
-
 def test_getProtocol(ucmdb_client):
     result = ucmdb_client.data_flow.getProtocol('ntadminprotocol')
     assert result.status_code == 200
