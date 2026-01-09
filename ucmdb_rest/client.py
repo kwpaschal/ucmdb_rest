@@ -3,15 +3,15 @@ import requests
 from requests.exceptions import RequestException
 
 # Importing all services
-from .dataflowmanagement import DataFlowManagement
+from .data_flow_management import DataFlowManagement
 from .datamodel import DataModel
 from .policies import Policies
 from .topology import Topology
 from .discovery import Discovery
-from .exposeCI import ExposeCI
+from .expose_ci import ExposeCI
 from .integration import Integrations
 from .ldap import RetrieveLDAP
-from .mgmtzone import ManagementZones
+from .management_zone import ManagementZones
 from .report import Reports
 from .settings import Settings
 from .packages import Packages
@@ -22,8 +22,11 @@ class UCMDBAuthError(Exception):
     pass
 
 class UCMDBServer:
-    def __init__(self, user, password, server, port=8443, protocol='https', ssl_validation=False, client_context=1):
-        self.base_url = f'{protocol}://{server}:{port}/rest-api'
+    def __init__(self, user, password, server, port=8443, protocol='https', ssl_validation=False, client_context=1, classic=True):
+        if classic:
+            self.base_url = f'{protocol}://{server}:{port}/rest-api'
+        else:
+            self.base_url = f'{protocol}://{server}:{port}/ucmdb-server/rest-api'
         self.root_url = f'{protocol}://{server}:{port}'
         
         # Initialize Session
@@ -33,9 +36,10 @@ class UCMDBServer:
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         })
+        self.client_context = client_context
 
         # Authenticate immediately
-        self._authenticate(user, password, client_context)
+        self._authenticate(user, password)
 
         # Register Service Modules (Standardized naming)
         self.data_flow = DataFlowManagement(self)
@@ -52,12 +56,12 @@ class UCMDBServer:
         self.packages = Packages(self)
         self.system = System(self)
 
-    def _authenticate(self, user, password, client_context):
+    def _authenticate(self, user, password):
         """Internal method to fetch and set the Bearer token."""
         payload = {
             'username': user,
             'password': password,
-            'clientContext': client_context
+            'clientContext': self.client_context
         }
         
         try:

@@ -2,14 +2,14 @@ import pytest
 
 def test_integration_list_and_details(ucmdb_client):
     """Verify listing all IPs and then fetching details for each (Command 59 logic)."""
-    info_res = ucmdb_client.integration.getIntegrationInfo()
+    info_res = ucmdb_client.integrations.getIntegrationInfo()
     assert info_res.status_code == 200
     json_results = info_res.json()
     assert isinstance(json_results, dict)
 
     if json_results:
         for ipoint_name in json_results:
-            details = ucmdb_client.integration.getIntegrationDetails(ipoint_name, detail='false')
+            details = ucmdb_client.integrations.getIntegrationDetails(ipoint_name, detail='false')
             assert details.status_code == 200
             assert details.json()["name"] == ipoint_name
             break 

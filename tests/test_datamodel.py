@@ -18,7 +18,7 @@ node_global_id = None
 def test_addCIs(ucmdb_client):
     global ci_list, node_global_id
     # Use returnIdsMap=True to get the mapping of temp IDs to real IDs
-    result = ucmdb_client.datamodel.addCIs(myCI, returnIdsMap=True)
+    result = ucmdb_client.data_model.addCIs(myCI, returnIdsMap=True)
     
     assert result.status_code == 200
     data = result.json()
@@ -40,7 +40,7 @@ def test_updateCI(ucmdb_client):
     updatedCI = {"ucmdbId":node_global_id,
                  "type":"node",
                  "properties" : {"data_note":"Updated by REST"}}
-    response = ucmdb_client.datamodel.updateCI(node_global_id, updatedCI)
+    response = ucmdb_client.data_model.updateCI(node_global_id, updatedCI)
     
     assert response.status_code == 200
     data = response.json()
@@ -49,20 +49,20 @@ def test_updateCI(ucmdb_client):
 def test_deleteCIs(ucmdb_client):
     global ci_list
     for ci_id in ci_list:
-        response = ucmdb_client.datamodel.deleteCIs(ci_id, isGlobalId=True)
+        response = ucmdb_client.data_model.deleteCIs(ci_id, isGlobalId=True)
         assert response.status_code == 200
 
 def test_getClass(ucmdb_client):
-    response = ucmdb_client.datamodel.getClass("node")
+    response = ucmdb_client.data_model.getClass("node")
     assert response.status_code == 200
 
 def test_retrieveIdentificationRule(ucmdb_client):
-    response = ucmdb_client.datamodel.retrieveIdentificationRule("node")
+    response = ucmdb_client.data_model.retrieveIdentificationRule("node")
     assert response.status_code == 200
 
 def test_convertFromBase64_logic(ucmdb_client):
     sample_input = "SGVsbG8gVUNNREI="
     expected_output = "Hello UCMDB"
 
-    result = ucmdb_client.datamodel.convertFromBase64(sample_input)
+    result = ucmdb_client.data_model.convertFromBase64(sample_input)
     assert result == expected_output
