@@ -1,0 +1,14 @@
+[tool.ruff]
+# The folder where your code lives
+src = ["ucmdb_rest"]
+# Allow lines to be a bit longer (UCMDB URLs can be long!)
+line-length = 100
+
+[tool.ruff.lint]
+# Select the rules you want (E = Error, F = Pyflakes, I = Isort)
+select = ["E", "F", "I"]
+
+# This part solves your specific problem:
+[tool.ruff.lint.per-file-ignores]
+# Ignore "Unused Import" (F401) specifically in the tests directory
+"tests/*" = ["F401"]
