@@ -1,5 +1,7 @@
-import pytest
 import time
+
+import pytest
+
 
 def test_management_zone_full_lifecycle(ucmdb_client):
     # Setup unique names to avoid collisions

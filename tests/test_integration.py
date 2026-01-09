@@ -1,5 +1,6 @@
 import pytest
 
+
 def test_integration_list_and_details(ucmdb_client):
     """Verify listing all IPs and then fetching details for each (Command 59 logic)."""
     info_res = ucmdb_client.integrations.getIntegrationInfo()

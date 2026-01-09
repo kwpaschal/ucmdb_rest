@@ -7,6 +7,7 @@ Created on Wed Jun  5 15:05:19 2024
 
 import base64
 
+
 class DataModel:
     def __init__(self, client):
         """
@@ -33,11 +34,17 @@ class DataModel:
         base64_bytes = stringToDecode.encode("utf-8")
         sample_string_bytes = base64.b64decode(base64_bytes)
         decoded_string = sample_string_bytes.decode("utf-8")
-        return(decoded_string)
+        return decoded_string
 
-    def addCIs(self, ciToCreate, isGlobalId=False,
-            forceTemporaryID=False, ignoreExisting=False,
-            returnIdsMap=False, ignoreWhenCantIdentify=False):
+    def addCIs(
+        self,
+        ciToCreate,
+        isGlobalId=False,
+        forceTemporaryID=False,
+        ignoreExisting=False,
+        returnIdsMap=False,
+        ignoreWhenCantIdentify=False,
+    ):
         """
         Adds a given bulk of CIs which are defined outside this
         method.
@@ -152,9 +159,9 @@ class DataModel:
             "forceTemporaryId": str(forceTemporaryID).lower(),
             "ignoreExisting": str(ignoreExisting).lower(),
             "returnIdsMap": str(returnIdsMap).lower(),
-            "ignoreWhenCantIdentify": str(ignoreWhenCantIdentify).lower()
+            "ignoreWhenCantIdentify": str(ignoreWhenCantIdentify).lower(),
         }
-        url = f'{self.client.base_url}/dataModel'
+        url = f"{self.client.base_url}/dataModel"
         return self.client.session.post(url, json=ciToCreate, params=query_params)
 
     def deleteCIs(self, id_to_delete, isGlobalId=False):
@@ -186,9 +193,9 @@ class DataModel:
             }
 
         """
-        url = f'{self.client.base_url}/dataModel/ci/{id_to_delete}'
-        params = {"isGlobalId":str(isGlobalId).lower()}
-        return self.client.session.delete(url,params=params)
+        url = f"{self.client.base_url}/dataModel/ci/{id_to_delete}"
+        params = {"isGlobalId": str(isGlobalId).lower()}
+        return self.client.session.delete(url, params=params)
 
     def getClass(self, CIT):
         """
@@ -238,10 +245,10 @@ class DataModel:
         >>> print(class_def['name'])
         'node'
         """
-        url = f'{self.client.base_url}/classModel/citypes/{CIT}'
+        url = f"{self.client.base_url}/classModel/citypes/{CIT}"
         return self.client.session.get(url)
 
-    def retrieveIdentificationRule(self, cit='node'):
+    def retrieveIdentificationRule(self, cit="node"):
         """
         Issues a REST API get call to show the identification rule for a CI Type
 
@@ -265,21 +272,31 @@ class DataModel:
 
             Example XML format:
                 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                <identification-config type="location" description="Location is identified by a combination of (Name, LocationType) or (Name, CloudLocationType). Two similarly identified locations will be considered different entities if they are contained in different locations.">
+                <identification-config type="location" description="Location is identified by a
+                  combination of (Name, LocationType) or (Name, CloudLocationType). Two similarly
+                   identified locations will be considered different entities if they are contained
+                   in different locations.">
                     <identification-criteria>
                         <identification-criterion>
-                            <attribute-condition attributeName="name" includeNullValue="false" conditionType="approveAndContradict" matchNameOnly="false"/>
-                            <attribute-condition attributeName="location_type" includeNullValue="false" conditionType="approveAndContradict" matchNameOnly="false"/>
+                            <attribute-condition attributeName="name" includeNullValue="false"
+                             conditionType="approveAndContradict" matchNameOnly="false"/>
+                            <attribute-condition attributeName="location_type"
+                            includeNullValue="false" conditionType="approveAndContradict"
+                             matchNameOnly="false"/>
                         </identification-criterion>
                         <identification-criterion>
-                            <attribute-condition attributeName="name" includeNullValue="false" conditionType="approveAndContradict" matchNameOnly="false"/>
-                            <attribute-condition attributeName="cloud_location_type" includeNullValue="false" conditionType="approveAndContradict" matchNameOnly="false"/>
+                            <attribute-condition attributeName="name" includeNullValue="false"
+                             conditionType="approveAndContradict" matchNameOnly="false"/>
+                            <attribute-condition attributeName="cloud_location_type"
+                              includeNullValue="false" conditionType="approveAndContradict"
+                                matchNameOnly="false"/>
                         </identification-criterion>
                     </identification-criteria>
                     <match>
                         <verification-criteria>
                             <verification-criterion>
-                                <connected-ci-condition ciType="location" linkType="containment" isDirectionForward="false" conditionType="approveAndContradict">
+                                <connected-ci-condition ciType="location" linkType="containment"
+                                  isDirectionForward="false" conditionType="approveAndContradict">
                                     <overlap-fixed-operator number-of-matches="1"/>
                                 </connected-ci-condition>
                             </verification-criterion>
@@ -288,7 +305,7 @@ class DataModel:
                 </identification-config>
 
         """
-        url = f'{self.client.base_url}/classModel/citypes/{cit}?withAffectedResources=false'
+        url = f"{self.client.base_url}/classModel/citypes/{cit}?withAffectedResources=false"
         return self.client.session.get(url)
 
     def updateCI(self, id_to_update, update_ci):
@@ -317,5 +334,5 @@ class DataModel:
                 "ignoredCis": []
             }
         """
-        url = f'{self.client.base_url}/dataModel/ci/{id_to_update}'
+        url = f"{self.client.base_url}/dataModel/ci/{id_to_update}"
         return self.client.session.put(url, json=update_ci)

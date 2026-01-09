@@ -1,5 +1,6 @@
 import pytest
 
+
 def test_system_ping(ucmdb_client):
     # This must start with test_
     response = ucmdb_client.system.ping()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
+
 def test_package_metadata_queries(ucmdb_client):
     """
     Tests only the read-only GET methods for packages.
@@ -25,7 +26,7 @@ def test_package_metadata_queries(ucmdb_client):
     filter_res = ucmdb_client.packages.filterPackage(pkg_display_name)
     assert filter_res.status_code == 200
     # filterPackage returns {'collection': [...]}
-    assert any(p['displayName'] == pkg_display_name for p in filter_res.json().get('collection', []))
+    assert any(p['displayName'] == pkg_display_name for p in filter_res.json().get('collection', []))  # noqa: E501
 
     # 4. Test getProgress (Status check)
     progress_res = ucmdb_client.packages.getProgress(pkg_zip_name)

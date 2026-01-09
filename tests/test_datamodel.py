@@ -44,7 +44,7 @@ def test_updateCI(ucmdb_client):
     
     assert response.status_code == 200
     data = response.json()
-    assert node_global_id in data.get("updatedCis", []) or node_global_id in data.get("ignoredCis", [])
+    assert node_global_id in data.get("updatedCis", []) or node_global_id in data.get("ignoredCis", [])  # noqa: E501
 
 def test_deleteCIs(ucmdb_client):
     global ci_list

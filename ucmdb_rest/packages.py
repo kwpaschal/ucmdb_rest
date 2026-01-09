@@ -9,6 +9,7 @@ UCMDB server.
 
 from urllib.parse import quote
 
+
 class Packages:
     def __init__(self, client):
         """
@@ -148,7 +149,7 @@ class Packages:
             Binary file to be written.
         """
         safe_package = quote(package_name)
-        url = f'{self.client.base_url}/uiserver/packagemanager/resources/export?packageName={safe_package}'
+        url = f'{self.client.base_url}/uiserver/packagemanager/resources/export?packageName={safe_package}'  # noqa: E501
         return self.client.session.get(url)
 
     def filterPackage(self, package):
@@ -204,7 +205,7 @@ class Packages:
             }
         """
         safe_package = quote(package)
-        url = f'{self.client.base_url}/uiserver/packagemanager/packages?isPaginationEnabled=true&start=0&limit=20&sortDir=ASC&sortField=name&search={safe_package}'
+        url = f'{self.client.base_url}/uiserver/packagemanager/packages?isPaginationEnabled=true&start=0&limit=20&sortDir=ASC&sortField=name&search={safe_package}'  # noqa: E501
         return self.client.session.get(url)
 
     def getContentPacks(self):

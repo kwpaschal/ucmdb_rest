@@ -1,0 +1,9 @@
+site_name: UCMDB REST Client
+theme:
+  name: material
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]  # This tells mkdocstrings to look in the current folder for ucmdb_rest

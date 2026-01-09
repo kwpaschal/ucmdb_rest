@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture(scope="module")
 def active_probe_name(ucmdb_client):
     """Fetches the first available probe name from the server."""

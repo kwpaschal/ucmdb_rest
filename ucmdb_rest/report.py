@@ -8,8 +8,9 @@ This python library contains methods dealing with reports in the
 UCMDB server.
 """
 
-from urllib.parse import quote
 from unittest.mock import MagicMock
+from urllib.parse import quote
+
 
 class Reports:
     def __init__(self, client):
@@ -47,7 +48,7 @@ class Reports:
         viewName = quote(view)
         attr_string = ",".join(attributes)
         encoded_filter = quote(f'type=ALL&attributes={attr_string}')
-        url = f'{self.client.base_url}/report/change/view/{viewName}/results?filter={encoded_filter}&dateFrom={str(fromTime)}&dateTo={str(toTime)}&start=1&pageSize=100'
+        url = f'{self.client.base_url}/report/change/view/{viewName}/results?filter={encoded_filter}&dateFrom={str(fromTime)}&dateTo={str(toTime)}&start=1&pageSize=100'  # noqa: E501
         return self.client.session.get(url)
 
     def changeReportsBlacklist(self, toTime, fromTime, view, attributes=['description']):
@@ -102,7 +103,8 @@ class Reports:
                                     "attribute": "name",
                                     "oldValue": "create2",
                                     "newValue": "create22",
-                                    "changer": "User:{UISysadmin###UCMDB},LoggedInUser:{admin###UCMDB}",
+                                    "changer": "User:{UISysadmin###UCMDB},
+                                                LoggedInUser:{admin###UCMDB}",
                                     "changeDate": 1484741091500
                                 }
                             ]
@@ -170,7 +172,8 @@ class Reports:
                                     "attribute": "name",
                                     "oldValue": "create2",
                                     "newValue": "create22",
-                                    "changer": "User:{UISysadmin###UCMDB},LoggedInUser:{admin###UCMDB}",
+                                    "changer": "User:{UISysadmin###UCMDB},
+                                                LoggedInUser:{admin###UCMDB}",
                                     "changeDate": 1484741091500
                                 }
                             ]

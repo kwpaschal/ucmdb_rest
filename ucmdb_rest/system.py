@@ -67,7 +67,7 @@ class System:
                 }
             }
         """
-        url = f'{self.client.root_url}/ping?restrictToWriter={restrictToWriter}&restrictToReader={restrictToReader}'
+        url = f'{self.client.root_url}/ping?restrictToWriter={restrictToWriter}&restrictToReader={restrictToReader}'  # noqa: E501
         return self.client.session.get(url)
 
     def getLicenseReport(self):

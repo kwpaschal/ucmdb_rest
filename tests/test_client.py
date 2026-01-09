@@ -1,5 +1,6 @@
 import pytest
-from ucmdb_rest.client import UCMDBServer, UCMDBAuthError
+from ucmdb_rest.client import UCMDBAuthError, UCMDBServer
+
 
 def test_connection_and_auth(ucmdb_client):
     """

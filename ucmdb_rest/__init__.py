@@ -1,4 +1,4 @@
-from .client import UCMDBServer, UCMDBAuthError
+from .client import UCMDBAuthError, UCMDBServer
 
 # Only keep utilities that are strictly helper functions 
 # and don't require an active server connection to exist.

@@ -2,6 +2,7 @@
 import pytest
 from ucmdb_rest.policies import ComplianceStatus
 
+
 def test_policies_full_lifecycle(ucmdb_client):
     """
     Tests the complete compliance workflow:
