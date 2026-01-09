@@ -95,3 +95,7 @@ def test_compare_compliance_coverage(ucmdb_client):
     # Logic check: If total is > 0, we've successfully hit both paths
     assert isinstance(passing_cis, list)
     assert isinstance(failing_cis, list)
+
+def test_calculateView(ucmdb_client):
+    result = ucmdb_client.policies.calculateView("All My Windows Servers")
+    assert result.status_code == 200

@@ -33,3 +33,7 @@ ucmdb_rest/discovery/
 
 # UCMDB Credentials for testsd
 tests/credentials.json
+
+# Ignore coverage
+.coverage
+htmlcov/

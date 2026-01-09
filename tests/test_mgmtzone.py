@@ -56,3 +56,17 @@ def test_management_zone_full_lifecycle(ucmdb_client):
         ucmdb_client.discovery.deleteSpecificJobGroup(profile_name)
         
         print("Cleanup complete. No artifacts remain.")
+
+def test_getMgmtZone(ucmdb_client):
+    result = ucmdb_client.mgmt_zones.getMgmtZone()
+    assert result.status_code==200
+
+def test_getSpecificMgmtZoneandStatistics(ucmdb_client):
+    result = ucmdb_client.mgmt_zones.getMgmtZone()
+    items = result.json()
+    if len(items["items"]) > 0:
+        zone_to_test = items["items"][0]["name"]
+        newresult = ucmdb_client.mgmt_zones.getSpecificMgmtZone(zone_to_test)
+        assert newresult.status_code == 200
+        statsresult = ucmdb_client.mgmt_zones.getStatisticsForZone(zone_to_test)
+        assert statsresult.status_code == 200

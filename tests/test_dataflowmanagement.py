@@ -90,3 +90,23 @@ def test_checkCredential(ucmdb_client,active_probe_name):
     # Adjust "CMS_1_1" to a valid credential ID in your environment if needed
     result = ucmdb_client.data_flow.checkCredential("CMS_1_1", active_probe_name, "10.0.0.1")
     assert result.status_code != 404
+
+def test_getAllProtocols(ucmdb_client):
+    result = ucmdb_client.data_flow.getAllProtocols()
+    assert result.status_code == 200
+
+def test_getCredentialProfiles(ucmdb_client):
+    result = ucmdb_client.data_flow.getCredentialProfiles()
+    assert result.status_code == 200
+
+def test_probeStatus(ucmdb_client):
+    result = ucmdb_client.data_flow.probeStatus()
+    assert result.status_code == 200
+
+def test_queryIPs(ucmdb_client):
+    result = ucmdb_client.data_flow.queryIPs('10.1.1.')
+    assert result.status_code == 200
+
+def test_queryProbe(ucmdb_client):
+    result = ucmdb_client.data_flow.queryProbe()
+    assert result.status_code == 200
