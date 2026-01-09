@@ -37,3 +37,4 @@ tests/credentials.json
 # Ignore coverage
 .coverage
 htmlcov/
+site/
