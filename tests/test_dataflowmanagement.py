@@ -12,10 +12,8 @@ def active_probe_name(ucmdb_client):
     return items[0]['probeName']
 
 def test_getProbeRanges(ucmdb_client, active_probe_name):
-    # Now you use the dynamic name instead of a hard-coded string
     ranges = ucmdb_client.data_flow.getProbeRanges(active_probe_name)
-    assert ranges is not None
-    assert isinstance(ranges, list)
+    assert ranges.status_code == 200
 
 def test_addRange(ucmdb_client,active_probe_name):
     RANGE_TO_ADD = [{

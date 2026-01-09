@@ -4,16 +4,16 @@ A modern, object-oriented Python 3.6+ wrapper for the OpenText Universal Configu
 
 ## Quick Start
 
-The library uses a central `UCMDBClient` to manage authentication and session persistence. All sub-modules are accessible as attributes of the client.
+The library uses a central `UCMDBServer` to manage authentication and session persistence. 
 
 ```python
-from ucmdb_rest.client import UCMDBClient
+from ucmdb_rest import UCMDBServer
 from ucmdb_rest.policies import ComplianceStatus
 
 # Initialize connection
-client = UCMDBClient(
-    base_url="[https://ucmdb.example.com:8443/rest-api](https://ucmdb.example.com:8443/rest-api)", 
-    username="admin", 
+client = UCMDBServer(
+    server="ucmdb.example.com", 
+    user="admin", 
     password="password"
 )
 
@@ -42,22 +42,17 @@ The library is organized into specialized modules to mirror the UCMDB API ecosys
 ## Development and Testing
 
 We use `pytest` for functional validation. To run the suite:
-
 ```bash
-# Run all tests
-pytest
+# Run all tests with coverage
+pytest --cov=ucmdb_rest
 
-# Run a specific test with stdout enabled
-pytest -s tests/test_policies.py
+# Lint the code
+ruff check .
 
-# Run a specific test with stdout enabled
-pytest -s tests/test_policies.py
-
+# Preview documentation
+mkdocs serve
+```
 ## Additional Documentation
-
-Detailed guides and historical context can be found in the `docs/` directory:
-* **IMPLEMENTATION_SUMMARY.md**: Historical technical overview of the API integration.
-* **TODO.md**: Active roadmap and upcoming feature tracking.
 
 ## Release History
 
