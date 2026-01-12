@@ -129,8 +129,10 @@ class UCMDBServer:
         self.settings = Settings(self)
         self.packages = Packages(self)
         self.system = System(self)
+        self.version = (0,0,0)
+        self._initialize_version()
 
-def _authenticate(self, user, password):
+    def _authenticate(self, user, password):
         """
         Authenticate with the UCMDB server and retrieves a token.
 
@@ -160,3 +162,13 @@ def _authenticate(self, user, password):
             
         except RequestException as e:
             raise UCMDBAuthError(f"Failed to connect to UCMDB at {self.base_url}: {e}")
+    def _initialize_version(self):
+        """
+        Uses the system.getUCMDBVersion method to retrieve the version of this UCMDB server
+        """
+        try:
+            server_ver = self.system.getUCMDBVersion().json()
+            v_str = server_ver.get('fullServerVersion')
+            self.version = tuple(map(int,v_str.split('.')))
+        except Exception:
+            self.version = (11,6,11)

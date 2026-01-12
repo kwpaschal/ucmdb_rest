@@ -25,6 +25,9 @@ class System:
         This method makes a GET request to the UCMDB server to fetch version
         information.
 
+        This method is called automatically during UCMDBServer initialization 
+        to populate the 'self.version' attribute for API compatibility checks.
+
         Parameters
         ----------
         None
