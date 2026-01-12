@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 15:12:48 2024
+UCMDB Management Zones Service
 
-@author: kpaschal
+This module manages CMS UI Management Zones. These zones define the scope, 
+activities, and schedules for automated discovery.
 
-This python library contains methods dealing with managment zones in the 
-UCMDB server.  These zones are CMS UI zones, not UCMDB local client 
-management zones.
+Exposed Methods:
+    activateZone, deactivateZone, getAllZones, getStatisticsForZone, getZone
 """
 
 from urllib.parse import quote
+
 
 class ManagementZones:
     def __init__(self, client):
@@ -174,20 +175,18 @@ class ManagementZones:
 
     def getStatisticsForZone(self, zone_id):
         """
-        Retrieves statistics for a specific management zone from the UCMDB server.
+        Retrieves real-time discovery statistics for a specific management zone.
 
-        This method makes a GET request to the UCMDB server to retrieve statistics
-        for a specific management zone.
-
-        Parameters:
-        -----------
+        Parameters
+        ----------
         zone_id : str
-            The ID of the management zone for which statistics are requested.
+            The unique ID or Name of the management zone.
 
-        Returns:
-        --------
+        Returns
+        -------
         requests.Response
-            Response object containing the statistics for the specified management zone.
+            Contains trigger summaries (Success, Warning, Error, In Progress) 
+            and the total count of discovered CIs.
         """
         # This uses a different base (/discovery/results/statistics), so we build it manually
         url = f'{self.client.base_url}/discovery/results/statistics?mzoneId={quote(zone_id)}'

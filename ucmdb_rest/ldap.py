@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 16:05:36 2024
+UCMDB LDAP Service
 
-@author: kpaschal
+This module provides methods to retrieve and inspect the LDAP integration 
+settings used by UCMDB for user authentication and group mapping.
 
-This python library contains methods dealing with LDAP settings in the 
-UCMDB server.
+Exposed Methods:
+    getLDAPSettings
 """
 
 class RetrieveLDAP:
@@ -15,81 +16,28 @@ class RetrieveLDAP:
         """
         self.client = client
 
-    def getLDAPSettings(self):
+def getLDAPSettings(self):
         """
-        Retrieves the LDAP configuration from UCMDB.
+        Retrieves the full LDAP configuration from the UCMDB server.
 
-        This function makes a GET request to the UCMDB server to retrieve
-        the information.
-
-        Parameters
-        ----------
-        None
+        This includes connection URLs, service account details (masked), 
+        user/group search filters, and attribute mappings.
 
         Returns
         -------
         requests.Response
-            A list of dictionaries containing 1 LDAP entry per list entry.
+            A JSON array containing dictionaries for each configured 
+            LDAP repository.
             
-            Example
-            -------
-            [
-                {
-                    "connection": {
-                        "url": "ldap://ftcdc02.swinfra.net:389/OU=2-Resources,DC=swinfra,DC=net??sub",
-                        "searchUser": "CN=_UCMDBLDAP (00330644),OU=Missouri,OU=Americas,OU=2.2.1-Service Accounts - Std,OU=2-Resources,DC=swinfra,DC=net",
-                        "searchUserPassword": null,
-                        "enabledSearchForDN": true
-                    },
-                    "group": {
-                        "groupSearch": {
-                            "base": "OU=_Other,OU=Americas,OU=2.5.1-Groups - Std,OU=2-Resources,DC=swinfra,DC=net",
-                            "filter": "(&(objectclass=group)(cn=sec-gg-ucmdb*))",
-                            "scope": "sub"
-                        },
-                        "rootGroupSearch": {
-                            "base": "OU=_Other,OU=Americas,OU=2.5.1-Groups - Std,OU=2-Resources,DC=swinfra,DC=net",
-                            "filter": "(&(objectclass=group)(cn=sec-gg-ucmdb*))",
-                            "scope": "sub"
-                        },
-                        "useBottomUpAlgorithm": true
-                    },
-                    "staticGroup": {
-                        "groupClass": "group",
-                        "nameAttribute": "cn",
-                        "descriptionAttribute": "description",
-                        "displayNameAttribute": "cn",
-                        "memberAttribute": "member"
-                    },
-                    "dynamicGroup": {
-                        "enabled": false,
-                        "groupClass": null,
-                        "descriptionAttribute": null,
-                        "displayNameAttribute": null,
-                        "memberAttribute": null,
-                        "nameAttribute": null
-                    },
-                    "user": {
-                        "userClass": "user",
-                        "displayNameAttribute": "cn",
-                        "uniqueIdAttribute": "employeeID",
-                        "userFilter": "(&(employeeID=*)(objectClass=user))",
-                        "displayUsersGroup": true,
-                        "splitRepositoryFromLoginName": true,
-                        "userSearch": {
-                            "base": null,
-                            "filter": null,
-                            "scope": null,
-                            "nrOfUsersRetrievedAtOnce": 20,
-                            "distinguishedNameAttribute": ""
-                        }
-                    },
-                    "integration": {
-                        "defaultGroup": "UCMDBAdmins",
-                        "priority": 2
-                    }
-                }
-            ]
+        Example Response Structure:
+        ---------------------------
+        [
+            {
+                "connection": {"url": "ldap://...", "searchUser": "..."},
+                "user": {"userClass": "user", "uniqueIdAttribute": "employeeID"},
+                "group": {"groupClass": "group", "memberAttribute": "member"}
+            }
+        ]
         """
         url = f'{self.client.base_url}/ldap/settings'
         return self.client.session.get(url)

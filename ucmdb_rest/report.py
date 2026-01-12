@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 15:10:48 2024
+UCMDB Reports Service
 
-@author: kpaschal
+This module provides methods to generate Change Reports. These reports track 
+how CIs and their attributes have evolved over a specified time period within 
+the context of a specific UCMDB View.
 
-This python library contains methods dealing with reports in the 
-UCMDB server.
+Exposed Methods:
+    changeReportsAll
 """
 
 from unittest.mock import MagicMock
@@ -21,29 +23,38 @@ class Reports:
             
     def changeReportsAll(self, toTime, fromTime, view, attributes=['description', 'name']):
         """
-        Retrieves change reports for all elements within a specified time range
-        and view.
-
-        This method generates a request to retrieve change reports for all
-        elements within a specified time range and view.
+        Retrieves change reports for all elements within a specified time range.
 
         Parameters
         ----------
         toTime : int
-            The end time of the time range for the report. Format is epoch time
-            in milliseconds.
+            The end time of the report (Epoch time in milliseconds).
         fromTime : int
-            The start time of the time range for the report. Format is epoch time
-            in milliseconds.
+            The start time of the report (Epoch time in milliseconds).
         view : str
-            The name of the view for which the change reports are requested.
-        attributes : list
-            A list of attributes to display on the report
+            The name of the UCMDB View to scope the report.
+        attributes : list of str, optional
+            A list of CI attributes to monitor for changes. 
+            Default is ['description', 'name'].
 
         Returns
         -------
         requests.Response
-            Response object containing the change reports.
+            A Response object. If the API returns a 400 (Bad Request), this 
+            method returns a mocked 200 response with an empty JSON body 
+            to ensure automation scripts can continue gracefully.
+            
+        Example Response Body:
+        ----------------------
+        {
+            "ciChanges": {
+                "44c93b...": {
+                    "changes": {
+                        "name": [{"oldValue": "srv01", "newValue": "srv01-prod"}]
+                    }
+                }
+            }
+        }
         """
         viewName = quote(view)
         attr_string = ",".join(attributes)

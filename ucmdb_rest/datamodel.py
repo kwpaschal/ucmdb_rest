@@ -1,14 +1,44 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 15:05:19 2024
+UCMDB Data Model and Class Model Service
 
-@author: kpaschal
+This module provides an interface to the UCMDB Object Model. It is divided 
+into two primary functional areas:
+
+1. Data Model (Instances): 
+   Methods for CRUD operations on CIs and Relationships (addCIs, updateCI, 
+   deleteCIs).
+   
+2. Class Model (Metadata): 
+   Methods for inspecting CI Type definitions, attributes, and identification 
+   rules (getCIProperties, retrieveIdentificationRule).
+
+Exposed Methods:
+    addCIs, convertFromBase64, deleteCIs, getCIProperties, 
+    retrieveIdentificationRule, updateCI
+
+Usage:
+    # Create a new CI
+    new_ci = {"cis": [{"type": "node", "properties": {"name": "host01"}}]}
+    myserver.datamodel.addCIs(new_ci)
 """
 
 import base64
 
 
 class DataModel:
+    """
+    Service module for interacting with the UCMDB Class Model and Data Model.
+
+    This module provides methods to create, update, and delete Configuration Items (CIs)
+    and Relationships, as well as tools to inspect the CI Type (Class) definitions
+    and identification rules.
+
+    Parameters
+    ----------
+    client : UCMDBServer
+        An instance of the primary UCMDB client.
+    """
     def __init__(self, client):
         """
         Initialize the service with a reference to the main level UCMDB client
@@ -46,113 +76,33 @@ class DataModel:
         ignoreWhenCantIdentify=False,
     ):
         """
-        Adds a given bulk of CIs which are defined outside this
-        method.
+        Adds or updates a bulk collection of CIs and Relationships.
 
         Parameters
         ----------
         ciToCreate : dict
-            A dictionary representing CIs to add. For example:
+            A dictionary defining the CIs and relations.
+            Example:
             {
-            "cis": [
-                    {
-                    "ucmdbId": "1",
-                    "type": "node",
-                    "properties": {"name":"Test6",
-                                    "os_family":"windows"}
-                    },{
-                    "ucmdbId": "2",
-                    "type": "ip_address",
-                    "properties": {"name":"100.100.100.1"}
-                    },{
-                    "ucmdbId": "4",
-                    "type": "running_software",
-                    "properties": {
-                        "discovered_product_name":
-                        "my software"}
-                    }
-                ],
-                "relations": [
-                    {
-                    "ucmdbId":"3",
-                    "type": "containment",
-                    "end1Id": 1,
-                    "end2Id": 2,
-                    "properties": {}
-                    },{
-                    "ucmdbId": "5",
-                    "type": "composition",
-                    "end1Id": 1,
-                    "end2Id": 4,
-                    "properties": {}
-                    }
-                ]
+                "cis": [{"ucmdbId": "1", "type": "node", "properties": {"name": "Test"}}],
+                "relations": [{"type": "containment", "end1Id": "1", "end2Id": "2"}]
             }
         isGlobalId : bool, optional
-            Is there a global ID in the payload to use?
-            The default is False.
+            Whether IDs in the payload are global UCMDB IDs. Default is False.
         forceTemporaryID : bool, optional
-            Is there a temporary object ID in the payload?
-            The default is False.
-        verify_flag : bool, optional
-            Should we verify the SSL certificate of the server?
-            The default is False.
+            Whether to treat provided IDs as temporary identifiers. Default is False.
         ignoreExisting : bool, optional
-            Should we ignore an existing CI when trying to create one?
-            The default is False. This could result in an empty map,
-            such as:
-            {
-            "addedCis": [],
-            "removedCis": [],
-            "updatedCis": [],
-            "ignoredCis": []
-            }
+            If True, existing CIs will not be updated. Default is False.
         returnIdsMap : bool, optional
-            Should we return an ID Map? The default is False.
-            The output is different if this is True:
-            {
-            "addedCis": [],
-            "removedCis": [],
-            "updatedCis": [],
-            "ignoredCis": [
-                "44c93b1d0230dd02b013364a7b8c635f",
-                "46861bedaa49a57c8ded7bd5598063d1",
-                "425c6932d1c77461b334820a5f11ba06",
-                "49207844d429e0aa8b12deebb2f02a49",
-                "4c08d336b05421a1ae48c067951f9248"
-            ],
-            "idsMap": {
-                "1": "44c93b1d0230dd02b013364a7b8c635f",
-                "2": "46861bedaa49a57c8ded7bd5598063d1",
-                "3": "425c6932d1c77461b334820a5f11ba06",
-                "4": "49207844d429e0aa8b12deebb2f02a49",
-                "5": "4c08d336b05421a1ae48c067951f9248"
-            }
-            }
-            This shows that in our input the thing referred to as 1
-            is now the global ID: 44c93b1d0230dd02b013364a7b8c635f
+            If True, returns a mapping of temporary IDs to actual UCMDB IDs. Default is False.
         ignoreWhenCantIdentify : bool, optional
-            Should we ignore what cannot be identified, or throw an
-            error? The default is False.
+            If True, skips CIs that do not match identification rules instead of failing.
+            Default is False.
 
         Returns
         -------
         requests.Response
-            This is a dictionary of what was added, removed, updated
-            or ignored.
-            {
-            "addedCis": [],
-            "removedCis": [],
-            "updatedCis": [],
-            "ignoredCis": [
-                "44c93b1d0230dd02b013364a7b8c635f",
-                "46861bedaa49a57c8ded7bd5598063d1",
-                "425c6932d1c77461b334820a5f11ba06",
-                "49207844d429e0aa8b12deebb2f02a49",
-                "4c08d336b05421a1ae48c067951f9248"
-            ]
-            }
-
+            A response containing lists of added, removed, updated, or ignored IDs.
         """
         query_params = {
             "isGlobalId": str(isGlobalId).lower(),
@@ -166,32 +116,19 @@ class DataModel:
 
     def deleteCIs(self, id_to_delete, isGlobalId=False):
         """
-        Deletes a CI by its ID by making a delete request via the
-        REST API.
+        Deletes a specific CI by its ID.
 
         Parameters
         ----------
         id_to_delete : str
-            This is the global or local UCMDB ID.
+            The UCMDB ID (local or global) to delete.
         isGlobalId : bool, optional
-            Is the ID a global ID? The default is False.
-        verify_flag : bool, optional
-            Should the SSL certificate of the UCMDB server be verified?
-            The default is False.
+            Set to True if the ID provided is a Global ID. Default is False.
 
         Returns
         -------
         requests.Response
-            A dictionary describing the results. For example:
-            {
-                "addedCis": [],
-                "removedCis": [
-                    "44c93b1d0230dd02b013364a7b8c635f"
-                ],
-                "updatedCis": [],
-                "ignoredCis": []
-            }
-
+            A summary of the deletion result.
         """
         url = f"{self.client.base_url}/dataModel/ci/{id_to_delete}"
         params = {"isGlobalId": str(isGlobalId).lower()}
@@ -250,60 +187,23 @@ class DataModel:
 
     def retrieveIdentificationRule(self, cit="node"):
         """
-        Issues a REST API get call to show the identification rule for a CI Type
+        Retrieves the XML identification rule for a specific CI Type.
 
         Parameters
         ----------
         cit : str, optional
-            CI type name to retrieve. The default is 'node'.
-        verify_flag : bool, optional
-            Check the SSL certificate of the UCMDB server? The default is False.
+            The CI Type name. Default is 'node'.
 
         Returns
         -------
         requests.Response
-            The response object containing the class model information.
-            To get the decoded identification rule XML, use:
-            ```python
-            response = retrieveIdentificationRule('node')
-            data = response.json()
-            xml = convertFromBase64(data["identification"]["ruleXml"])
-            ```
-
-            Example XML format:
-                <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                <identification-config type="location" description="Location is identified by a
-                  combination of (Name, LocationType) or (Name, CloudLocationType). Two similarly
-                   identified locations will be considered different entities if they are contained
-                   in different locations.">
-                    <identification-criteria>
-                        <identification-criterion>
-                            <attribute-condition attributeName="name" includeNullValue="false"
-                             conditionType="approveAndContradict" matchNameOnly="false"/>
-                            <attribute-condition attributeName="location_type"
-                            includeNullValue="false" conditionType="approveAndContradict"
-                             matchNameOnly="false"/>
-                        </identification-criterion>
-                        <identification-criterion>
-                            <attribute-condition attributeName="name" includeNullValue="false"
-                             conditionType="approveAndContradict" matchNameOnly="false"/>
-                            <attribute-condition attributeName="cloud_location_type"
-                              includeNullValue="false" conditionType="approveAndContradict"
-                                matchNameOnly="false"/>
-                        </identification-criterion>
-                    </identification-criteria>
-                    <match>
-                        <verification-criteria>
-                            <verification-criterion>
-                                <connected-ci-condition ciType="location" linkType="containment"
-                                  isDirectionForward="false" conditionType="approveAndContradict">
-                                    <overlap-fixed-operator number-of-matches="1"/>
-                                </connected-ci-condition>
-                            </verification-criterion>
-                        </verification-criteria>
-                    </match>
-                </identification-config>
-
+            The response containing the Base64 encoded 'ruleXml'.
+            
+        Examples
+        --------
+        >>> response = model.retrieveIdentificationRule('node')
+        >>> rule_b64 = response.json()["identification"]["ruleXml"]
+        >>> xml = model.convertFromBase64(rule_b64)
         """
         url = f"{self.client.base_url}/classModel/citypes/{cit}?withAffectedResources=false"
         return self.client.session.get(url)

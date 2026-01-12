@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 15:23:51 2024
+UCMDB Integrations Service
 
-@author: kpaschal
+This module provides methods for managing and monitoring UCMDB Integration Points. 
+It supports both Data Population (pulling data into UCMDB) and Data Push 
+(sending data to external systems).
 
-This python library contains methods dealing with integrations in the 
-UCMDB server.
+Exposed Methods:
+    getIntegrationDetails, getIntegrationInfo
 """
 from urllib.parse import quote
+
 
 class Integrations:
     def __init__(self, client):
@@ -16,7 +19,7 @@ class Integrations:
         """
         self.client = client
 
-    def getIntegrationDetails(self, integrationpoint, detail='false'):
+    def getIntegrationDetails(self, integrationpoint, detail=False):
         """
         Retrieves information about a specific integration point.
 
@@ -27,9 +30,9 @@ class Integrations:
         ----------
         integrationpoint : str
             An integration point name to get the details from.
-        detail : str
+        detail : bool
             This returns either verbose or non-verbose information. Must
-            be set to 'true' or 'false'.
+            be set to True or False.
 
         Returns
         -------
@@ -131,7 +134,8 @@ class Integrations:
                 }
         """
         safe_ip_name = quote(integrationpoint)
-        url = f'{self.client.base_url}/integration/integrationpoints/{safe_ip_name}?detail={detail}'
+        detail_str = str(detail).lower()
+        url = f'{self.client.base_url}/integration/integrationpoints/{safe_ip_name}?detail={detail_str}'  # noqa: E501
         return self.client.session.get(url)
 
     def getIntegrationInfo(self):

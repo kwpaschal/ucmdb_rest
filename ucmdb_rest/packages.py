@@ -1,10 +1,16 @@
+# -*- coding: utf-8 -*-
 """
-Created on Mon Jun  3 16:45:23 2024
+UCMDB Package and Content Pack Service
 
-@author: kpaschal
+This module manages the deployment, export, and status of UCMDB packages 
+and official Content Packs.
 
-This python library contains methods dealing with packages in the 
-UCMDB server.
+Package Operations:
+    deletePackage, deployPackage, exportPackage, filterPackage, 
+    getPackage, getPackages, getProgress
+
+Content Pack Operations:
+    getContentPacks, getSpecificContentPack, getDiffReport, uploadContentPack
 """
 
 from urllib.parse import quote
@@ -353,37 +359,37 @@ class Packages:
         return self.client.session.get(url)
 
     def getProgress(self, package):
-        '''
+        """
+        Retrieves the deployment or undeployment progress for a specific package.
+
         Parameters
         ----------
         package : str
-            Name of the package to get the status of.
+            Name of the package to check.
 
         Returns
         -------
         requests.Response
-            Dictionary with progress.  Example:
-                {
-                    "status": "FINISHED",
-                    "detailMessage": null,
-                    "failedResourceNames": []
-                }
-        '''
+            A JSON response indicating status (e.g., 'FINISHED', 'IN_PROGRESS') 
+            and any failed resource names.
+        """
         safe_package = quote(package)
         url = f'{self.client.base_url}/packagemanager/packages/{safe_package}/progress'
         return self.client.session.get(url)
 
     def getSpecificContentPack(self, cpversion):
-        '''
+        """
+        Retrieves the status and deployment percentage of a specific Content Pack.
+
         Parameters
         ----------
         cpversion : str
-            Content pack version.
+            The version string of the Content Pack (e.g., '24.1.109').
 
         Returns
         -------
         requests.Response
-            JSON output with CP Version and status
+            JSON containing deployment status and completion percentage.
             
             {
             "version": "24.1.109",
@@ -392,23 +398,25 @@ class Packages:
             "cpDeploymentProgress": "FINISHED",
             "cpDeploymentPercentage": "100%"
             }
-
-        '''
+        """
         url = f'{self.client.base_url}/packagemanager/contentpacks/{cpversion}'
         return self.client.session.get(url)
 
     def uploadContentPack(self, filestoupload, cp_name):
-        '''
+        """
+        Uploads a new Content Pack version to the UCMDB server.
+
         Parameters
         ----------
-        filestoupload : binary file
+        filestoupload : bytes
+            Binary content of the Content Pack file.
         cp_name : str
-            Name of the content pack (e.g. 24.1.109)
+            The name/version to associate with the upload.
 
         Returns
         -------
         requests.Response
-            JSON with the status of the upload. For example:
+            Status of the upload process.
                 {
                 "name" : null,
                 "errorCode" : {
@@ -422,7 +430,7 @@ class Packages:
                 "deploySuccessful" : true,
                 "resourcesStatus" : [ ]
                 }
-        '''
+        """
         files_uploaded = {'file': (cp_name, filestoupload)}
         url = f'{self.client.base_url}/packagemanager/contentpacks'
         return self.client.session.post(url,files=files_uploaded)

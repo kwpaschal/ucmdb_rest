@@ -2,16 +2,18 @@
 """
 UCMDB Data Flow Management Service
 
-This module handles all the REST API interactions related to data flow probes, IP Ranges and Discovery domains.
-The following methods are exposed here:  addRange, checkCredential, createNTCMDCredential, deleteProbe, deleteRange,
-do_availability_check, getAllDomains, getAllCredentials, getAllProtocols, getCredentialProfiles, getProbeInfo, 
-getProbeRanges, getProtocol, probeStatus, probeStatusDetails, queryIPs, queryProbe and updateRange
+This module handles all the REST API interactions related to data flow probes, IP Ranges and
+Discovery domains.  The following methods are exposed here:  addRange, checkCredential,
+createNTCMDCredential, deleteProbe, deleteRange, do_availability_check, getAllDomains,
+getAllCredentials, getAllProtocols, getCredentialProfiles, getProbeInfo, getProbeRanges,
+getProtocol, probeStatus, probeStatusDetails, queryIPs, queryProbe and updateRange
 
 Usage:
   myserver.dataflowmanagement.getProbeInfo()
 """
 
 from urllib.parse import urlencode
+
 
 class DataFlowManagement:
     def __init__(self, client):
@@ -56,7 +58,7 @@ class DataFlowManagement:
         url = f'{self.client.base_url}/dataflowmanagement/probes/{probe_name}/ranges'
         return self.client.session.post(url, json=range_to_add)
 
-    def checkCredential (self, credential_id, probe, ip_addr):
+    def checkCredential (self, credential_id, probe, ip_addr, timeout=60000):
         """
         This function will check the credential from UCMDB server/Probe to a target
 
@@ -68,8 +70,9 @@ class DataFlowManagement:
             Name of the probe
         ip_addr: str
             IP Address to run check agains
-        tout: int
-            Timeout in milliseconds
+        timeout : int
+            This is the max amount of time to wait for a response.  It may need to be
+            increased on slow networks.  Default is 60000 (60 seconds)
 
         Returns
         -------
@@ -80,10 +83,10 @@ class DataFlowManagement:
         body_json = {
             'probeName':probe,
             'ipAddress':ip_addr,
-            'timeout':60000
+            'timeout':timeout
         }
 
-        url = f'{self.client.base_url}/dataflowmanagement/credentials/'+credential_id+'/availability'
+        url = f'{self.client.base_url}/dataflowmanagement/credentials/'+credential_id+'/availability'  # noqa: E501
         return self.client.session.post(url,json=body_json)
 
     def createNTCMDCredential(self, my_protocol):
@@ -121,15 +124,9 @@ class DataFlowManagement:
             For example:  {}
 
         """
-        base_url = f'{self.client.base_url}/dataflowmanagement/probes?'
-
-        # Constructing the query parameters
-        for i in range(len(probe_names)):
-            if i == 0:
-                base_url += f'probenames={probe_names[i]}'
-            else:
-                base_url += f'&probenames={probe_names[i]}'
-        return self.client.session.delete(base_url)
+        url = f'{self.client.base_url}/dataflowmanagement/probes'
+        params = {'probenames': probe_names}
+        return self.client.session.delete(url, params=params)
 
     def deleteRange(self, delete_range, probe_name):
         """
@@ -164,7 +161,7 @@ class DataFlowManagement:
         return self.client.session.delete(url,json=delete_range)
 
 
-    def do_availability_check(self, ci_to_check, probe):
+    def do_availability_check(self, ci_to_check, probe, timeout=60000):
         """
         Checks the availability of a given credential.
 
@@ -173,16 +170,13 @@ class DataFlowManagement:
 
         Parameters
         ----------
-        token : dict
-            Authentication token created by calling the function 'createHeaders'
-            with arguments of ucmdb_user, ucmdb_pass, and ucmdb_server.
-        udserver : str
-            UCMDB Server hostname that is valid from DNS resolution (IP or
-            hostname).
         ci_to_check : dict
             A dictionary of the UD Agent CI to check.
         probe : str
             The probe the CI is part of.
+        timeout : int
+            This is the max amount of time to wait for a response.  It may need to be
+            increased on slow networks.  Default is 60000 (60 seconds)
 
         Returns
         -------
@@ -192,9 +186,9 @@ class DataFlowManagement:
         json_body = {
             'probeName': probe,
             'ipAddress': ci_to_check['application_ip'],
-            'timeout': 600000
+            'timeout': timeout
         }
-        url = f'{self.client.base_url}/dataflowmanagement/credentials/' + str(ci_to_check['credentials_id']) + '/availability'
+        url = f'{self.client.base_url}/dataflowmanagement/credentials/' + str(ci_to_check['credentials_id']) + '/availability'  # noqa: E501
         return self.client.session.post(url, json=json_body)
 
     def getAllDomains(self):
@@ -805,7 +799,7 @@ class DataFlowManagement:
             }
 
         """
-        url = f'{self.client.base_url}/uiserver/probeService/dashboard/domain/{domain}/probe/{probe}/runtime'
+        url = f'{self.client.base_url}/uiserver/probeService/dashboard/domain/{domain}/probe/{probe}/runtime'  # noqa: E501
         return self.client.session.get(url)
 
     def queryIPs(self, ip_addr):
@@ -855,12 +849,13 @@ class DataFlowManagement:
         url = f'{self.client.base_url}/dataflowmanagement/probes?queriedIpAddress={ip_addr}'
         return self.client.session.get(url)
 
-    def queryProbe(self,ip_addr="",desc_filter="",domains=None,fields="",probestat=None,versioncomp=None):
+    def queryProbe(self,ip_addr="",desc_filter="",domains=None,fields="",probestat=None,versioncomp=None):  # noqa: E501
         """
-        The is a general purpose query about probes all the parameters are optional.  If none are specified, all
-        probes will be printed in a dictionary with a top level key of 'items' and one or more dictionaries of the
-        fields specified, or all fields about the probe.  Results appear to be 'or' results, not 'and' results with 
-        the exception of the probe status and version compatability items, which appear to and with things.
+        The is a general purpose query about probes all the parameters are optional.  If none are
+        specified, all probes will be printed in a dictionary with a top level key of 'items' and
+        one or more dictionaries of the fields specified, or all fields about the probe.  Results
+        appear to be 'or' results, not 'and' results with the exception of the probe status and
+        version compatability items, which appear to and with things.
         
         Parameters
         ----------
@@ -872,11 +867,12 @@ class DataFlowManagement:
         domains : list[str]
             This is a list of strings, e.g.  ['DefaultDomain'] or ['DefaultDomain','MyDomain']
         fields : str
-            This is a string representing the field to display.  Can be comma separated with no spaces.
+            This is a string representing the field to display.  Can be comma separated
             For example:  description,probename
         probestat : list[str]
             This is a list which must contain at least one of these values, if specified
-            DISCONNECTED, CONNECTED, STOPPED, RESTARTING, UPGRADING, AUTHENTICATION_FAILED, TOKEN_AUTHENTICATION_FAILED
+            DISCONNECTED, CONNECTED, STOPPED, RESTARTING, UPGRADING, AUTHENTICATION_FAILED,
+            TOKEN_AUTHENTICATION_FAILED
         versioncomp : list[str]
             This is a list which must contain at least one of these values, if specified
             MATCHED, UPGRADEABLE, MUST_UPGRADE, NOT_SUPPORTED, UNKNOWN, COMPATIBLE, INCOMPATIBLE

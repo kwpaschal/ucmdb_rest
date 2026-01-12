@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-This is a file for a few system level utilities which we can run and are nice to have around.
+UCMDB System and Utility Service
 
-@author: kpaschal
+This module provides methods for system-level health checks, connectivity 
+verification, and licensing audits. It is essential for monitoring server 
+availability and tracking resource consumption.
+
+Exposed Methods:
+    getLicenseInfo, getUCMDBVersion, ping
 """
 
 class System:
@@ -49,11 +54,11 @@ class System:
         Parameters
         ----------
         restrictToWriter : bool, optional
-            When set to True, only if the server is a writer will this return
-            a valid status. Default is False.
+            If True, the ping only succeeds if the node is the primary 
+            'Writer' node in a cluster. Default is False.
         restrictToReader : bool, optional
-            When set to True, only if the server is a reader will this return
-            a valid status. Default is False.
+            If True, the ping only succeeds if the node is a 'Reader' node. 
+            Default is False.
 
         Returns
         -------
@@ -72,10 +77,11 @@ class System:
 
     def getLicenseReport(self):
         """
-        Retrieves the UCMDB license report from UCMDB.
+        Retrieves detailed licensing and capacity information.
 
-        This method makes a GET request to the UCMDB server to fetch license
-        information.
+        This report includes license types (TERM/PERPETUAL), capacity limits, 
+        remaining days until expiration, and active features for both 
+        UCMDB and Universal Discovery.
 
         Parameters
         ----------

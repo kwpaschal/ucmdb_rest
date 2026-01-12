@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 15:26:41 2024
+UCMDB Settings and Recipient Service
 
-@author: kpaschal
+This module manages administrative configurations for the UCMDB server. 
+It is split into two functional areas:
 
-This library contains methods use for settings and reipient manager
+1. Recipient Manager: Create, update, and list recipients for automated 
+   communications (reports, notifications).
+2. Infrastructure Settings: Retrieve global server-wide configurations.
+
+Exposed Methods:
+    addRecipients, getSetting, getRecipients, updateRecipients
 """
 
 class Settings:
@@ -27,7 +33,7 @@ class Settings:
                     "id": "",
                     "name": "Keith",
                     "addresses": [
-                        "kpaschal@opentext.com"
+                        "kpaschal@mycompany.com"
                     ]
                 }
 

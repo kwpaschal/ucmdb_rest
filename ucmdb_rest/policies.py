@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 14:49:33 2024
+UCMDB Policies and Compliance Service
 
-@author: kpaschal
+This module provides methods to manage UCMDB policies and retrieve compliance 
+reports. Policies allow for the automated checking of CIs against specific 
+configurations or security standards.
 
-This python 3 library contains methods relating to UCMDB compliance views
+Exposed Methods:
+    calculateComplianceView, getComplianceViews, getPolicies, 
+    getSpecificComplianceView
 """
-from urllib.parse import quote
 from enum import Enum
+from urllib.parse import quote
+
 
 class ComplianceStatus(Enum):
     """Enumeration for valid UCMDB Compliance Status types."""
@@ -116,7 +121,7 @@ class Policies:
         >>>
         >>> Certificates must use https Node with WebServer ['Certificates must use https']
         >>> Kubernetes statefulset must have pod Kubernetes StatefulSet ['Kubernetes statefulset must have pod']
-        """
+        """  # noqa: E501
         url = f'{self.client.base_url}/policy/complianceViews'
         return self.client.session.get(url)
 

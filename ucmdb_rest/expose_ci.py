@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 16:11:06 2024
+UCMDB Expose CI Service
 
-@author: kpaschal
+This module provides a powerful searching and data extraction interface. 
+It allows users to define complex filters, select specific layout attributes, 
+ and retrieve bulk CI data without needing a pre-defined TQL.
+
+Exposed Methods:
+    getInformation, search_by_label
 """
 
 class ExposeCI:
@@ -17,7 +22,8 @@ class ExposeCI:
         Parameters
         ----------
         json_to_expose : dict
-            This is a representation of a pattern of CIs to expose. For example:
+            A dictionary defining the CI Type, attribute layout, 
+            sorting, and filtering conditions.
             {
                 "type": "running_software",
                 "layout": [
@@ -74,11 +80,29 @@ class ExposeCI:
         url = f'{self.client.base_url}/exposeCI/getInformation'
         return self.client.session.post(url, json=json_to_expose)
 
-    def search_nodes_by_label(self, label_pattern, operator="LIKE"):
-        """Helper to quickly find nodes by display_label."""
+def search_by_label(self, label_pattern, ci_type="node", operator="LIKE", layout=None):
+        """
+        A flexible helper to find CIs of any type based on their display label.
+
+        Parameters
+        ----------
+        label_pattern : str
+            The string to search for.
+        ci_type : str, optional
+            The UCMDB CI Type (e.g., 'node', 'ip_address', 'business_service'). 
+            Default is 'node'.
+        operator : str, optional
+            The filtering operator (e.g., 'LIKE', 'EQUAL'). Default is 'LIKE'.
+        layout : list of str, optional
+            Specific attributes to return. If None, defaults to 
+            ['display_label', 'name', 'global_id'].
+        """
+        if layout is None:
+            layout = ["display_label", "name", "global_id"]
+
         payload = {
-            "type": "node",
-            "layout": ["display_label", "name", "global_id"],
+            "type": ci_type,
+            "layout": layout,
             "includeSubtypes": "true",
             "filtering": {
                 "logicalOperator": "and",
@@ -91,4 +115,5 @@ class ExposeCI:
                 ]
             }
         }
-        return self.getInformation(payload)
+        url = f'{self.client.base_url}/exposeCI/getInformation'
+        return self.client.session.post(url, json=payload)

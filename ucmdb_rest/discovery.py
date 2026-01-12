@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun   5 15:16:59 2024
+UCMDB Discovery Service
 
-@author: kpaschal
+This module provides an interface for managing the CMS UI Discovery framework. 
+It allows for the programmatic management of Discovery Jobs, Job Groups, 
+and Discovery Profiles.
 
-This module contains methods to work with CMS UI jobs inside the CMS UI
-discovery framework.
+Functional Areas:
+1. Job Groups: Create, delete, and list groups of discovery jobs.
+2. Discovery Profiles: Manage profiles and their associated job groups.
+3. Discovery Metadata: Inspect available discovery use cases and jobs.
+
+Exposed Methods:
+    createJobGroup, deleteJobGroup, getJobGroups,
+    createProfile, deleteProfile, getProfile, getProfiles,
+    getDiscoveryUseCases
 """
 
 from urllib.parse import quote
+
 
 class Discovery:
     def __init__(self, client):
@@ -28,73 +38,67 @@ class Discovery:
 
     def createJobGroup(self, job_group):
         """
-        Creates a job group with the job_group specified.
-
-        This function makes a POST request to the UCMDB server to 
-        create a job group.
+        Creates a new Discovery Job Group.
 
         Parameters
         ----------
         job_group : dict
-            A dictionary containing the job group to be created. Example:
-                {
-                  "name": "string",
-                  "description": "string",
-                  "jobs": [
-                    {
-                      "jobName": "string",
-                      "jobDisplayName": "string",
-                      "adapterName": "string",
-                      "inputCI": "string",
-                      "jobType": "string",
-                      "protocols": [
-                        "string"
-                      ],
-                      "jobParameters": {
-                        "additionalProp1": "string",
-                        "additionalProp2": "string",
-                        "additionalProp3": "string"
-                      },
-                      "triggerQueries": [
-                        "string"
-                      ],
-                      "jobInvokeOnNewTrigger": true
-                    }
-                  ]
-                }
+            A dictionary defining the job group.
+            Example:
+            {
+              "name": "Inventory_Group",
+              "description": "Custom inventory jobs",
+              "jobs": [
+                {"jobName": "Host Connection by Shell", "isActivated": true},
+                {"jobName": "Host Applications by Shell", "isActivated": true}
+              ]
+            }
 
         Returns
         -------
         requests.Response
-            A dictionary containing the job group.
-
-        Example
-        -------
-        Example Output:
-        {
-          "name": "Hardware_Only-AgentBased",
-          "id": "Hardware_Only-AgentBased",
-          "type": "CMS",
-          "oob": false,
-          "description": "Hardware/Server config inventory using UDAgent",
-          "discoveryType": null,
-          "jobs": [
-            {
-              "jobName": "Call Home Processing",
-              "jobDisplayName": "Call Home Processing",
-              "adapterName": "CallHomeProcessing",
-              "inputCI": "callhome_event",
-              "jobType": "DynamicService",
-              "protocols": [],
-              "jobParameters": {},
-              "triggerQueries": [],
-              "jobInvokeOnNewTrigger": true
-            }
-          ]
-        }
+            The response from the UCMDB server.
         """
-        # --- CHANGED: Now uses the helper for a cleaner call ---
         return self.client.session.post(self._get_profile_url(), json=job_group)
+
+    def createProfile(self, profile_name, job_groups):
+        """
+        Creates a Discovery Profile and assigns job groups to it.
+
+        Parameters
+        ----------
+        profile_name : str
+            The unique name for the new profile.
+        job_groups : list of str
+            A list of existing job group names to be included in this profile.
+            Example: ["Inventory Jobs", "Network Discovery"]
+
+        Returns
+        -------
+        requests.Response
+        """
+        payload = {
+            "name": profile_name,
+            "jobGroups": [{"name": group} for group in job_groups]
+        }
+        url = self._get_profile_url()
+        return self.client.session.post(url, json=payload)
+
+    def deleteProfile(self, profile_name):
+        """
+        Deletes a Discovery Profile by name.
+
+        Parameters
+        ----------
+        profile_name : str
+            The name of the profile to delete.
+
+        Returns
+        -------
+        requests.Response
+        """
+        url = self._get_profile_url(profile_name)
+        return self.client.session.delete(url)
 
     def deleteSpecificJobGroup(self, job_group):
         """
@@ -608,62 +612,18 @@ class Discovery:
         # --- CHANGED: Simplified with the helper ---
         return self.client.session.get(self._get_profile_url(job_group))
 
-    def getUseCase(self):
+    def getDiscoveryUseCases(self):
         """
-        Retrieves a hierarchical structure of use cases for discovery.
-        
-        This method makes a GET request to the UCMDB server to retrieve
-        the information.
+        Retrieves the hierarchical tree of Discovery Use Cases.
 
-        Parameters
-        ----------
-        None
+        This is useful for building a UI or identifying the correct 
+        'name' for specific discovery categories.
 
         Returns
         -------
-        direquests.Responsect
-            A JSON representing a hierarchical structure of use cases 
-            for discovery. Each use case contains:
-            - name: The name of the use case.
-            - checked: A boolean value indicating if it's checked.
-            - display: A boolean value indicating if it's displayed.
-            - children: A list of dictionaries representing child use 
-              cases. Each child contains:
-                - name: The name of the child use case.
-                - checked: A boolean value indicating if it's checked.
-                - display: A boolean value indicating if it's displayed.
-                - children: A list of dictionaries representing nested 
-                  children. (This structure forms a hierarchical tree 
-                  of use cases.)
-
-        Example
-        -------
-        Example Output:
-        [
-            {
-                "name": "Discovery",
-                "checked": false,
-                "display": false,
-                "children": [
-                    {
-                        "name": "Network and Hosts",
-                        "checked": false,
-                        "display": true,
-                        "children": [
-                            {
-                                "name": "Network and Host Information",
-                                "checked": true,
-                                "display": null,
-                                "children": null
-                            },
-                            ...
-                        ]
-                    },
-                    ...
-                ]
-            },
-            ...
-        ]
+        requests.Response
+            A JSON array of use-case objects containing 'name', 'checked', 
+            'display', and 'children' (recursive).
         """
         url = f'{self.client.base_url}/discovery/discoverymetadata/usecases'
         return self.client.session.get(url)

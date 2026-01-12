@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
 """
-Created on Wed Jun  5 14:33:54 2024
+UCMDB Topology Service
 
-@author: kpaschal
+This module is the primary engine for retrieving CI and Relationship data 
+using pre-defined UCMDB Views. It provides high-level wrappers to handle 
+paginated (chunked) result sets automatically.
 
-This library contains imports for topology methods.
+Exposed Methods:
+    get_all_view_results, getChunk, runView
 """
 
 class Topology:
@@ -15,7 +19,23 @@ class Topology:
 
     def get_all_view_results(self, view_name, chunkSize=10000):
         """
-        Runs a view and automatically fetches all chunks, returning a combined result.
+        Executes a view and automatically aggregates all paged chunks.
+
+        This is the recommended method for retrieving large views. It handles 
+        the initial request and iterates through all subsequent chunks 
+        to provide a single, unified result set.
+
+        Parameters
+        ----------
+        view_name : str
+            The name of the view in UCMDB.
+        chunkSize : int, optional
+            The number of CIs to retrieve per API call. Default is 10000.
+
+        Returns
+        -------
+        dict
+            A combined dictionary containing 'cis' and 'relations' lists.
         """
         response = self.runView(view_name, chunkSize=chunkSize)
         response.raise_for_status()
@@ -51,7 +71,7 @@ class Topology:
         Parameters
         ----------
         res_id : str
-            The result ID from the topology call.
+            The temporary result identifier (queryResultId) from the initial call.
         index : int
             Which chunk to get.
 
@@ -201,5 +221,5 @@ class Topology:
                     "relations": []
                 }
         '''
-        url = f'{self.client.base_url}/topology?includeEmptyLayoutProperties={includeEmptyLayout}&chunkSize={chunkSize}'
+        url = f'{self.client.base_url}/topology?includeEmptyLayoutProperties={includeEmptyLayout}&chunkSize={chunkSize}'  # noqa: E501
         return self.client.session.post(url, json=view)
