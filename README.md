@@ -52,6 +52,12 @@ The library is organized into specialized modules to mirror the UCMDB API ecosys
 
 For detailed API references, parameter types, and method signatures, view our [Interactive Documentation](reference/data_flow_management.md).
 
+### Documentation Workflow
+The docs are powered by `mkdocs` and `mkdocstrings`.
+- **Source**: Python Docstrings (numpy Style)
+- **Theme**: Material for MkDocs
+- **Customization**: Located in `docs/stylesheets/extra.css`
+
 ## Development and Testing
 
 We use `pytest` for functional validation. To run the suite:

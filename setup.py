@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ucmdb_rest',
-    version='1.3.0',  # Bumped for the new OO architecture and Enums
+    version='1.7.0',  # Bumped for the new OO architecture and Enums
     packages=find_packages(),
     install_requires=[
         'requests~=2.31.0'  # Compatible release pinning
