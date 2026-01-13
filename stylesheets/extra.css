@@ -1,0 +1,43 @@
+/* 1. THE BLUE PATH: Force the library path and punctuation to Blue */
+.md-typeset .doc-heading code,
+.md-typeset .doc-heading code span,
+.md-typeset .doc-heading .o, 
+.md-typeset .doc-heading .p {
+    color: #b3e5fc !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* 2. THE PINK SIGNATURE: Only turn names pink IF they are inside () */
+/* This ensures ucmdb_rest stays blue, but 'client' turns pink */
+.md-typeset .doc-heading .p ~ .n,
+.md-typeset .doc-heading .p ~ .n + .o + .n {
+    color: #ff9aed !important;
+}
+
+/* 3. THE PINK TABLE: The "First Column" Rule */
+/* This targets the parameter names (range_to_add, probe_name) in the table */
+.md-typeset .doc-parameters td:first-child code,
+.md-typeset .doc-parameters td:first-child span,
+.md-typeset .doc-parameters td:first-child {
+    color: #ff9aed !important;
+    font-weight: bold !important;
+}
+
+/* 4. THE BLUE DOT PROTECTOR: Explicitly stop dots from turning pink */
+.md-typeset .doc-heading span.o {
+    color: #b3e5fc !important;
+}
+
+/* 5. CLEANUP: Keep source code link gray */
+.md-typeset .doc-source-link code {
+    color: #999 !important;
+    font-size: 0.75em !important;
+}
+
+/* Make the Parameter names in the table stand out slightly more */
+.md-typeset .doc-parameters td:first-child code {
+    color: #ff9aed !important; /* The same pink as the signature */
+    font-weight: 700 !important; /* Extra bold */
+    font-size: 0.9em !important;
+}
