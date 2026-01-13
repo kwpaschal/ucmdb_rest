@@ -1,4 +1,5 @@
-site_name: UCMDB REST Python Library
+site_name: UCMDB REST Client
+site_url: https://kwpaschal.github.io/ucmdb_rest/
 
 theme:
   name: material

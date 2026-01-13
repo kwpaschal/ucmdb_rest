@@ -73,7 +73,10 @@ mkdocs serve
 ## Release History
 
 * **2.0.0 (Current)**
-  * Finalized migration of all legacy `rest.py` components into the new object-oriented structure.
+  * **Major Architecture Milestone**: Completed the migration of all legacy `rest.py` components.
+  * Re-engineered core modules into a modular, object-oriented framework.
+  * Standardized response handling using `requests.Response` objects across all modules.
+  * Enhanced code discoverability via the unified `UCMDBServer` entry point.
 * **1.7.0**
   * (Internal version alignment release)
 * **1.6.0**
