@@ -50,7 +50,7 @@ The library is organized into specialized modules to mirror the UCMDB API ecosys
 
 ## Documentation
 
-For detailed API references, parameter types, and method signatures, view our [Interactive Documentation](reference/data_flow_management.md).
+For detailed API references, view our [Interactive Documentation](reference/data_flow_management.md).
 
 ### Documentation Workflow
 The docs are powered by `mkdocs` and `mkdocstrings`.
@@ -70,11 +70,23 @@ mkdocs serve
 
 ## Release History
 
-* **1.2.0 (Current)**
-  * Major refactor to Object-Oriented architecture.
-  * Added `ComplianceStatus` Enum for type-safety.
-  * Implemented `getAllResultsForPath` automated pagination logic.
+## Release History
+
+* **2.0.0 (Current)**
+  * Finalized migration of all legacy `rest.py` components into the new object-oriented structure.
+* **1.7.0**
+  * (Internal version alignment release)
+* **1.6.0**
+  * Added Settings and Recipients management.
+* **1.5.0**
+  * Added Reports functionality and tests.
+* **1.4.0**
+  * Added Management Zone functionality and tests.
+* **1.3.0**
+  * Added LDAP configuration retrieval.
+* **1.2.0**
+  * Added integration point retrieval.
 * **1.1.0**
-  * Standardized docstrings to return `requests.Response` objects.
+  * Added ExposeCI ad-hoc query support.
 * **1.0.0**
-  * Initial library release.
+  * Initial stable release: Topology and Discovery modules complete.

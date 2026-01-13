@@ -821,6 +821,15 @@ class DataFlowManagement:
             {
                 "items": []
             }
+        Example:
+            !!! example "Finding an IP"
+                To check if an IP exists within any probe ranges, initialize the server 
+                and call `queryIPs`:
+
+                ```python
+                myserver = UCMDBServer("user", "pass", "server")
+                find_ip = myserver.data_flow_management.queryIPs("10.1.1.1")
+                ```
         """
         url = f'{self.client.base_url}/dataflowmanagement/probes?queriedIpAddress={ip_addr}'
         return self.client.session.get(url)

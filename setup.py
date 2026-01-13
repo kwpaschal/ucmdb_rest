@@ -1,8 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='ucmdb_rest',
-    version='1.7.0',  # Bumped for the new OO architecture and Enums
+    version='2.0.1',  # Bumped for the new OO architecture and Enums
     packages=find_packages(),
     install_requires=[
         'requests~=2.31.0'  # Compatible release pinning
