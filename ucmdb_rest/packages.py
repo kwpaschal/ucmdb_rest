@@ -221,10 +221,6 @@ class Packages:
         This function makes a GET request to the UCMDB server to retrieve
         information about the deployed content packs.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -308,10 +304,6 @@ class Packages:
 
         This method makes a GET request to the UCMDB server to retrieve a list
         of packages.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------

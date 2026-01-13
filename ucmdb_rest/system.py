@@ -28,10 +28,6 @@ class System:
         This method is called automatically during UCMDBServer initialization 
         to populate the 'self.version' attribute for API compatibility checks.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -85,10 +81,6 @@ class System:
         This report includes license types (TERM/PERPETUAL), capacity limits, 
         remaining days until expiration, and active features for both 
         UCMDB and Universal Discovery.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------

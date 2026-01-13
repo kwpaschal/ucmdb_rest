@@ -145,10 +145,6 @@ class Integrations:
         This function makes a GET request to the UCMDB server to 
         retrieve information about integration points.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response

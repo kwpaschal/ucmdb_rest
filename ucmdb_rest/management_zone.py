@@ -111,10 +111,6 @@ class ManagementZones:
         This method makes a GET request to the UCMDB server to retrieve management
         zone details.
 
-        Parameters:
-        -----------
-        None
-
         Returns:
         --------
         requests.Response

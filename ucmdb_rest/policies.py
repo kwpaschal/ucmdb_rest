@@ -100,10 +100,6 @@ class Policies:
         This method makes a GET request to the UCMDB server to fetch a list
         of compliance views.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -262,10 +258,6 @@ class Policies:
 
         This method makes a GET request to the UCMDB server to fetch a list
         of valid policies.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------

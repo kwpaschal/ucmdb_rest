@@ -133,10 +133,6 @@ class Discovery:
         This method makes a GET request to the UCMDB server to retrieve IP 
         range profiles.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -284,10 +280,6 @@ class Discovery:
         This function makes a GET request to the UCMDB server to 
         retrieve the module tree information.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -386,10 +378,6 @@ class Discovery:
 
         This function makes a GET request to the UCMDB server to retrieve
         the module tree information.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------
@@ -500,10 +488,6 @@ class Discovery:
 
         This function makes a GET request to the UCMDB server to 
         retrieve a list of schedules.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------

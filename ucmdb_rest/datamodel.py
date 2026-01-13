@@ -145,8 +145,6 @@ class DataModel:
         ----------
         CIT : str
             The class name (e.g., "node").
-        verify : bool
-            Verify the SSL certificate or not (default is False)
 
         Returns
         -------
@@ -197,7 +195,7 @@ class DataModel:
         Returns
         -------
         requests.Response
-            The response containing the Base64 encoded 'ruleXml'.
+            The response containing the Base64 encoded `ruleXml`.
             
         Examples
         --------
@@ -218,8 +216,6 @@ class DataModel:
             The global CI identifier (or LOCAL CI identifier).
         update_ci : dict
             A dictionary containing the update.
-        verify_flag : bool, optional
-            Should SSL be verified? The default is False.
 
         Returns
         -------

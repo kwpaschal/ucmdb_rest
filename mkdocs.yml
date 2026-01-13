@@ -1,9 +1,76 @@
-site_name: UCMDB REST Client
+site_name: UCMDB REST Python Library
+
 theme:
   name: material
+  palette: 
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  features:
+    - navigation.expand
+    - navigation.tabs
+    - content.code.copy
+    - content.code.annotate
+
+# This MUST be aligned with site_name and theme
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
+  - search
   - mkdocstrings:
       handlers:
         python:
-          paths: ["."]  # This tells mkdocstrings to look in the current folder for ucmdb_rest
+          paths: ["."] 
+          options:
+            docstring_style: numpy
+            docstring_section_style: table
+            show_root_heading: true
+            merge_init_into_class: true
+            heading_level: 2
+
+nav:
+  - Home: index.md
+  - API Reference:
+      - Client: reference/client.md
+      - Modules:
+          - Data Flow Management: reference/data_flow_management.md
+          - Data Model: reference/datamodel.md
+          - Discovery: reference/discovery.md
+          - Expose CI: reference/expose_ci.md
+          - Integration: reference/integration.md
+          - LDAP: reference/ldap.md
+          - Mannagement Zone: reference/management_zone.md
+          - Packages: reference/packages.md
+          - Policies: reference/policies.md
+          - Report: reference/report.md
+          - Settings: reference/settings.md
+          - System: reference/system.md
+          - Topology: reference/topology.md
+          - Utilities: reference/utils.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: ["."]
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

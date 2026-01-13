@@ -198,10 +198,6 @@ class DataFlowManagement:
         This function makes a GET request to the UCMDB server to retrieve
         the information.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -225,10 +221,6 @@ class DataFlowManagement:
     def getAllCredentials(self):
         """
         Retrieves all credentials via a GET call to the UCMDB REST API.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------
@@ -290,10 +282,6 @@ class DataFlowManagement:
         This method will get a dictionary which lists all possible
         protocols via a GET method to the UCMDB server.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -352,10 +340,6 @@ class DataFlowManagement:
         This method will get a dictionary which lists all current
         protocols instantiated via a GET method to the UCMDB server.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         requests.Response
@@ -400,10 +384,6 @@ class DataFlowManagement:
         """
         This method calls a UCMDB REST API via GET and returns the status
         of data flow probes.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------
@@ -637,10 +617,6 @@ class DataFlowManagement:
         """
         This method queries the UCMDB server and gets information about the
         status of the probe including CPU, RAM, Disk, etc.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------
@@ -877,10 +853,12 @@ class DataFlowManagement:
             This is a list which must contain at least one of these values, if specified
             MATCHED, UPGRADEABLE, MUST_UPGRADE, NOT_SUPPORTED, UNKNOWN, COMPATIBLE, INCOMPATIBLE
         
+        Notes
+        ----------
         An example URL:   
-        '<protocol>://<Server>:<Port>/rest-api/dataflowmanagement/probes?queriedIpAddress=10&queriedprobedesc=24&domainNames=DefaultDomain
-        &domainNames=MyDomain&fields=probename%2Cdescription&probeStatus=DISCONNECTED&probeStatus=CONNECTED&versionCompatibility=UPGRADEABLE
-        &versionCompatibility=MUST_UPGRADE'
+        ``<protocol>://<Server>:<Port>/rest-api/dataflowmanagement/probes?queriedIpAddress=10&queriedprobedesc=24&domainNames=DefaultDomain``
+        ``&domainNames=MyDomain&fields=probename%2Cdescription&probeStatus=DISCONNECTED&probeStatus=CONNECTED&versionCompatibility=UPGRADEABLE``
+        ``&versionCompatibility=MUST_UPGRADE``
 
         Returns
         -------
@@ -943,13 +921,6 @@ class DataFlowManagement:
 
         Parameters
         ----------
-        token : dict
-            Authentication token created by calling the function
-            'createHeaders' with arguments of ucmdb_user, ucmdb_pass, and
-            ucmdb_server.
-        udserver : str
-            UCMDB Server hostname that is valid from DNS resolution (IP or
-            hostname).
         range_to_add : dictionary containing 2 values 'oldRanges' and 'newRanges'
             as keys to lists of dictionaries
         probe_name : str

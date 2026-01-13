@@ -16,7 +16,7 @@ class RetrieveLDAP:
         """
         self.client = client
 
-def getLDAPSettings(self):
+    def getLDAPSettings(self):
         """
         Retrieves the full LDAP configuration from the UCMDB server.
 

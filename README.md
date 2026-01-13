@@ -25,19 +25,32 @@ results = client.policies.getAllResultsForPath(
 )
 
 print(f"Retrieved {len(results)} non-compliant CIs.")
-
+```
 ## Functional Modules
 
 The library is organized into specialized modules to mirror the UCMDB API ecosystem:
 
 | Module | Description |
 | :--- | :--- |
+| **client** | `UCMDBServer` class which acts as the entry point. |
+| **data_flow_management** | Operations affecting Data Flow Probes. |
 | **datamodel** | CRUD operations for Configuration Items (CIs) and Relations. |
-| **policies** | Policy calculation, compliance views, and automated result chunking. |
-| **topology** | TQL execution, ad-hoc queries, and fetching CI attributes. |
 | **discovery** | Management of discovery jobs, probe status, and results. |
+| **expose_ci** | On-demand queries of the UCMDB database. |
+| **integration** | Operations affecting integration points. |
+| **ldap** | Operations affecting LDAP integration in UCMDB. |
+| **management_zone** | Operations affecting UCMDB UI zone-based discovery. |
 | **packages** | Deployment and management of UCMDB Content Packs. |
-| **utils** | Shared helper functions, including URL encoding via `urllib.parse.quote`. |
+| **policies** | Policy calculation and automated result chunking. |
+| **report** | Operations involving reports and data exports. |
+| **settings** | Operations involving infrastructure settings and recipients. |
+| **system** | Licensing, versioning, and ping operations. |
+| **topology** | TQL execution, ad-hoc queries, and fetching CI attributes. |
+| **utils** | Shared helper functions and internal constants. |
+
+## Documentation
+
+For detailed API references, parameter types, and method signatures, view our [Interactive Documentation](reference/data_flow_management.md).
 
 ## Development and Testing
 
@@ -46,13 +59,8 @@ We use `pytest` for functional validation. To run the suite:
 # Run all tests with coverage
 pytest --cov=ucmdb_rest
 
-# Lint the code
-ruff check .
-
-# Preview documentation
+# Preview documentation locally
 mkdocs serve
-```
-## Additional Documentation
 
 ## Release History
 
@@ -64,9 +72,3 @@ mkdocs serve
   * Standardized docstrings to return `requests.Response` objects.
 * **1.0.0**
   * Initial library release.
-
-## Verification
-
-* **MIT License**: Included in `setup.py`.
-* **Dependencies**: `requests~=2.31.0` in `install_requires`.
-* **Clean Root**: Legacy `.md` files moved to `/docs`.

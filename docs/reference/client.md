@@ -1,3 +1,3 @@
-# API Reference
+# Client
 
 ::: ucmdb_rest.client.UCMDBServer

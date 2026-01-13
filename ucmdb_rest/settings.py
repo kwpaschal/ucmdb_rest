@@ -77,11 +77,7 @@ class Settings:
 
     def getRecipients(self):
         """
-        Gets a list of recipients from UCMDB via a REST API get call.
-
-        Parameters
-        ----------
-        None
+        Gets a list of recipients from UCMDB via a REST API GET call.
 
         Returns
         -------
