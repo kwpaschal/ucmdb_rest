@@ -61,6 +61,10 @@ nav:
           - System: reference/system.md
           - Topology: reference/topology.md
           - Utilities: reference/utils.md
+  - Examples:
+    - Data Model:
+      - Adding CIs: examples/data_model/add_cis.md
+
 
 markdown_extensions:
   - admonition
