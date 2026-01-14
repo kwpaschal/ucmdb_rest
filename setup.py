@@ -9,7 +9,7 @@ setup(
     ],
     author='Keith Paschal',
     author_email='kw.paschal@gmail.com',
-    description='A collection of utilities to interact with the Universal Configuration Management Database (UCMDB) REST API',
+    description='A collection of utilities to interact with the Universal Configuration Management Database (UCMDB) REST API',  # noqa: E501
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/kwpaschal/ucmdb_rest',
