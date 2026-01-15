@@ -1,3 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ucmdb_rest"
+version = "2.0.1"
+description = "A modular Python client for the UCMDB REST API"
+readme = "README.md"
+authors = [
+    { name = "Keith Paschal" }
+]
+requires-python = ">=3.6"
+dependencies = [
+    "requests>=2.25.0",
+]
 [tool.ruff]
 # The folder where your code lives
 src = ["ucmdb_rest"]

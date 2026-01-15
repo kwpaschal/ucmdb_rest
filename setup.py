@@ -2,10 +2,10 @@ from setuptools import find_packages, setup
 
 setup(
     name='ucmdb_rest',
-    version='2.0.1',  # Bumped for the new OO architecture and Enums
+    version='2.0.1',
     packages=find_packages(),
     install_requires=[
-        'requests~=2.31.0'  # Compatible release pinning
+        'requests~=2.31.0'
     ],
     author='Keith Paschal',
     author_email='kw.paschal@gmail.com',

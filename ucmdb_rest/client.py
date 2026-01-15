@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import logging
+
 import requests
 from requests.exceptions import RequestException
 
@@ -17,6 +19,7 @@ from .settings import Settings
 from .system import System
 from .topology import Topology
 
+logger = logging.getLogger("ucmdb_rest")
 
 class UCMDBAuthError(Exception):
     """Raised when UCMDB authentication fails."""
@@ -111,9 +114,10 @@ class UCMDBServer:
             {"Content-Type": "application/json", "Accept": "application/json"}
         )
         self.client_context = client_context
+        logger.info(f'Initializing UCMDB Server connection to {server}')
 
         # Authenticate immediately
-        self._authenticate(user, password)
+        self.token = self._authenticate(user, password)
 
         # Register Service Modules (Standardized naming)
         self.data_flow = DataFlowManagement(self)
@@ -129,8 +133,8 @@ class UCMDBServer:
         self.settings = Settings(self)
         self.packages = Packages(self)
         self.system = System(self)
-        self.version = (0,0,0)
-        self._initialize_version()
+        self.server_version = (0,0,0)
+        self._initialize_server_version()
 
     def _authenticate(self, user, password):
         """
@@ -154,21 +158,28 @@ class UCMDBServer:
 
         try:
             response = self.session.post(f"{self.base_url}/authenticate", json=payload)
-            response.raise_for_status() # Good practice to check for 4xx/5xx errors
+            response.raise_for_status()
             
             token = response.json().get("token")
             self.session.headers.update({"Authorization": f"Bearer {token}"})
+            logger.info("Sucessfully authenticated and retrieved token")
             return token
             
         except RequestException as e:
-            raise UCMDBAuthError(f"Failed to connect to UCMDB at {self.base_url}: {e}")
-    def _initialize_version(self):
+            if e.response is not None:
+                logger.error(f"Authentication failed. Status: {e.response.status_code}, Text: {e.response.text}")  # noqa: E501
+            else:
+                logger.error(f"Network error: Could not reach {self.base_url}. Check DNS/VPN.")
+    
+            raise UCMDBAuthError(f"Authentication failed: {e}")
+        
+    def _initialize_server_version(self):
         """
         Uses the system.getUCMDBVersion method to retrieve the version of this UCMDB server
         """
         try:
             server_ver = self.system.getUCMDBVersion().json()
             v_str = server_ver.get('fullServerVersion')
-            self.version = tuple(map(int,v_str.split('.')))
+            self.server_version = tuple(map(int,v_str.split('.')))
         except Exception:
-            self.version = (11,6,11)
+            self.server_version = (11,6,11)

@@ -2,6 +2,10 @@
 
 This example demonstrates how to add new Configuration Items (CIs) and relationships to your UCMDB server using the `data_model` module.
 
+!!! info "Environment Awareness"
+    The library automatically detects the UCMDB server version upon connection. 
+    You can access this via **`client.server_version`**, which returns a tuple (e.g., `(11, 6, 0)`). This is useful for conditional logic if certain API features require a specific UCMDB version.
+
 ## Python Example
 
 ```python
