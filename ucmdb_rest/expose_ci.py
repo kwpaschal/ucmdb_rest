@@ -11,11 +11,11 @@ Exposed Methods:
 """
 
 class ExposeCI:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def getInformation(self, json_to_expose):
         '''
@@ -77,10 +77,10 @@ class ExposeCI:
             ]
 
         '''
-        url = f'{self.client.base_url}/exposeCI/getInformation'
-        return self.client.session.post(url, json=json_to_expose)
+        url = '/exposeCI/getInformation'
+        return self.server._request("POST",url,json=json_to_expose)
 
-def search_by_label(self, label_pattern, ci_type="node", operator="LIKE", layout=None):
+    def search_by_label(self, label_pattern, ci_type="node", operator="LIKE", layout=None):
         """
         A flexible helper to find CIs of any type based on their display label.
 
@@ -115,5 +115,5 @@ def search_by_label(self, label_pattern, ci_type="node", operator="LIKE", layout
                 ]
             }
         }
-        url = f'{self.client.base_url}/exposeCI/getInformation'
-        return self.client.session.post(url, json=payload)
+        url = '/exposeCI/getInformation'
+        return self.server._request("POST",url,json=payload)

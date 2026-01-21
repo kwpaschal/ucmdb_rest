@@ -19,7 +19,7 @@ def test_connection_and_auth(ucmdb_client):
     assert len(auth_header) > 20
 
 def test_failed_connection_bad_server():
-    with pytest.raises(ConnectionError) as excinfo:
+    with pytest.raises(UCMDBAuthError) as excinfo:
         UCMDBServer(
             user="admin",
             password="ucmdbadmin",

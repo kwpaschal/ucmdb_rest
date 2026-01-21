@@ -13,13 +13,12 @@ from urllib.parse import quote
 
 
 class ManagementZones:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
-        # Centralizing the base endpoint to avoid repetition
-        self.base_path = f'{self.client.base_url}/discovery/managementzones'
+        self.server = server
+        self.base_path = '/discovery/managementzones'
             
     def _get_url(self, zone_id=None):
         """Internal helper to build the URL and handle encoding."""
@@ -46,7 +45,7 @@ class ManagementZones:
 
         """
         url = f'{self._get_url(zone_id)}?operation=activate'
-        return self.client.session.patch(url)
+        return self.server._request("PATCH",url)
 
     def createManagementZone(self, mgmtZone):
         """
@@ -83,7 +82,7 @@ class ManagementZones:
         requests.Response
             Response object confirming the creation of the management zone.
         """
-        return self.client.session.post(self._get_url(), json=mgmtZone)
+        return self.server._request("POST",self._get_url(), json=mgmtZone)
 
     def deleteManagementZone(self, zone_id):
         """
@@ -102,7 +101,7 @@ class ManagementZones:
         requests.Response
             Response object confirming the deletion of the management zone.
         """
-        return self.client.session.delete(self._get_url(zone_id))
+        return self.server._request("DELETE",self._get_url(zone_id))
 
     def getMgmtZone(self):
         """
@@ -128,7 +127,7 @@ class ManagementZones:
                 - triggerSummary : Dictionary - A list of trigger statuses
                 
         """
-        return self.client.session.get(self._get_url())
+        return self.server._request("GET",self._get_url())
 
     def getSpecificMgmtZone(self, zone_id):
         """
@@ -167,7 +166,7 @@ class ManagementZones:
                     - ASMish: list of str
 
         """
-        return self.client.session.get(self._get_url(zone_id))
+        return self.server._request("GET",self._get_url(zone_id))
 
     def getStatisticsForZone(self, zone_id):
         """
@@ -185,5 +184,5 @@ class ManagementZones:
             and the total count of discovered CIs.
         """
         # This uses a different base (/discovery/results/statistics), so we build it manually
-        url = f'{self.client.base_url}/discovery/results/statistics?mzoneId={quote(zone_id)}'
-        return self.client.session.get(url)
+        url = f'/discovery/results/statistics?mzoneId={quote(zone_id)}'
+        return self.server._request("GET",url)

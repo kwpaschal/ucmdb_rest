@@ -21,15 +21,13 @@ from urllib.parse import quote
 
 
 class Discovery:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
-        # --- NEW: Centralized endpoint for profiles ---
-        self.profile_path = f'{self.client.base_url}/discovery/discoveryprofiles'
+        self.server = server
+        self.profile_path = '/discovery/discoveryprofiles'
 
-    # --- NEW: Helper method to handle URL construction and encoding ---
     def _get_profile_url(self, job_group=None):
         """Internal helper for profile URLs"""
         if job_group:
@@ -59,7 +57,7 @@ class Discovery:
         requests.Response
             The response from the UCMDB server.
         """
-        return self.client.session.post(self._get_profile_url(), json=job_group)
+        return self.server._request("POST",self._get_profile_url(), json=job_group)
 
     def createProfile(self, profile_name, job_groups):
         """
@@ -82,7 +80,7 @@ class Discovery:
             "jobGroups": [{"name": group} for group in job_groups]
         }
         url = self._get_profile_url()
-        return self.client.session.post(url, json=payload)
+        return self.server._request("POST",url,json=payload)
 
     def deleteProfile(self, profile_name):
         """
@@ -98,7 +96,7 @@ class Discovery:
         requests.Response
         """
         url = self._get_profile_url(profile_name)
-        return self.client.session.delete(url)
+        return self.server._request("DELETE",url)
 
     def deleteSpecificJobGroup(self, job_group):
         """
@@ -123,8 +121,7 @@ class Discovery:
             - 500 : Internal Server Error
 
         """
-        # --- CHANGED: Simplified with the helper (quote is handled inside) ---
-        return self.client.session.delete(self._get_profile_url(job_group))
+        return self.server._request("DELETE",self._get_profile_url(job_group))
 
     def getIPRange(self):
         """
@@ -157,8 +154,8 @@ class Discovery:
           range profiles within the location or group.
 
         """
-        url = f'{self.client.base_url}/discovery/iprangeprofiles'
-        return self.client.session.get(url)
+        url = '/discovery/iprangeprofiles'
+        return self.server._request("GET",url)
 
     def getIPRangeForIP(self, ipaddr):
         """
@@ -180,8 +177,8 @@ class Discovery:
             with the specified IP address.
 
         """
-        url = f'{self.client.base_url}/discovery/iprangeprofiles?ipaddress={ipaddr}'
-        return self.client.session.get(url)
+        url = f'/discovery/iprangeprofiles?ipaddress={ipaddr}'
+        return self.server._request("GET",url)
 
     def getJobGroup(self, fields =''):
         """
@@ -266,12 +263,11 @@ class Discovery:
           ]
         }
         """
-        # --- CHANGED: Using the centralized profile path ---
         if not fields:
             url = self._get_profile_url()
         else:
             url = f'{self._get_profile_url()}?fields={quote(fields)}'
-        return self.client.session.get(url)
+        return self.server._request("GET",url)
 
     def getJobMetaData(self):
         """
@@ -369,8 +365,8 @@ class Discovery:
           ]
         }
         """
-        url = f'{self.client.base_url}/discovery/discoverymetadata/jobmetadata'
-        return self.client.session.get(url)
+        url = '/discovery/discoverymetadata/jobmetadata'
+        return self.server._request("GET",url)
 
     def getModuleTree(self):
         """
@@ -423,8 +419,8 @@ class Discovery:
           ]
         }
         """
-        url = f'{self.client.base_url}/discovery/discoverymetadata/moduletree'
-        return self.client.session.get(url)
+        url = '/discovery/discoverymetadata/moduletree'
+        return self.server._request("GET",url)
 
     def getQuestions(self, job_name):
         """
@@ -479,8 +475,8 @@ class Discovery:
             }
         """
         job_name = quote(job_name)
-        url = f'{self.client.base_url}/discovery/discoverymeta/tags/questions?jobNames={job_name}'
-        return self.client.session.get(url)
+        url = f'/discovery/discoverymeta/tags/questions?jobNames={job_name}'
+        return self.server._request("GET",url)
 
     def getSchedules(self):
         """
@@ -535,8 +531,8 @@ class Discovery:
               ]
             }
         """
-        url = f'{self.client.base_url}/discovery/scheduleprofiles'
-        return self.client.session.get(url)
+        url = '/discovery/scheduleprofiles'
+        return self.server._request("GET",url)
 
     def getSpecificJobGroup(self, job_group):
         """
@@ -593,8 +589,7 @@ class Discovery:
               ]
             }
         """
-        # --- CHANGED: Simplified with the helper ---
-        return self.client.session.get(self._get_profile_url(job_group))
+        return self.server._request("GET",self._get_profile_url(job_group))
 
     def getDiscoveryUseCases(self):
         """
@@ -609,5 +604,5 @@ class Discovery:
             A JSON array of use-case objects containing 'name', 'checked', 
             'display', and 'children' (recursive).
         """
-        url = f'{self.client.base_url}/discovery/discoverymetadata/usecases'
-        return self.client.session.get(url)
+        url = '/discovery/discoverymetadata/usecases'
+        return self.server._request("GET",url)

@@ -1,16 +1,30 @@
-import ucmdb_rest
+import logging
 
-#creates a session with a UCMDB server.  Parameters are Username, Password,
-# UCMDB Server, Port (optional), Protocol (http or https) (optional),
-# verify SSL certificate (True or False) Client context (client number)
-# and Classic or Containerized (classic=true, containerized=false)
-client = ucmdb_rest.UCMDBServer('user', 'pass', 'myucmdb.mycompany.com', 
-                                    port=8443, 
-                                    protocol='https', 
-                                    verify=False, 
-                                    client_id=1, 
-                                    is_classic=True)
-ci_to_add = {"cis": [
+from ucmdb_rest import UCMDBAuthError, UCMDBServer
+
+# 1. SETUP LOGGING
+# We configure the root logger to show both our messages and the library's messages
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger("add_cis_example")
+
+def main():
+    # 2. INITIALIZE CLIENT
+    try:
+        # If you want to see deep details (like raw URLs), uncomment the next line:
+        # logging.getLogger("ucmdb_rest").setLevel(logging.DEBUG)
+        
+        client = UCMDBServer(
+            user="admin", 
+            password="password123", 
+            server="ucmdb-server.example.com"
+        )
+        logger.info(f"Connected to UCMDB Version: {client.server_version}")
+
+        # 3. PREPARE DATA
+        ci_to_add = {"cis": [
                         {
                             "ucmdbId": "temporary_id_1",
                             "type": "unix",
@@ -37,10 +51,17 @@ ci_to_add = {"cis": [
                         }
                     ]
             }
-response = client.data_model.addCIs(ci_to_add)
+        # 4. EXECUTE AND LOG RESULTS
+        logger.info("Attempting to add new Node CI...")
+        result = client.topology.add_cis(ci_to_add)
+        
+        # We log the resulting ID returned by the library
+        logger.info(f"Successfully added CI. UCMDB ID: {result}")
 
-if response.status_code == 200:
-    print('Sucessfully added CIs')
-    print(response.json())
-else:
-    print(f'Failed to add CIs: {response.text}')
+    except UCMDBAuthError as e:
+        logger.error(f"Authentication failed: {e}")
+    except Exception as e:
+        logger.critical(f"An unexpected error occurred: {e}", exc_info=True)
+
+if __name__ == "__main__":
+    main()

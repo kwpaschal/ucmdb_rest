@@ -1,5 +1,6 @@
 import pytest
 
+
 # 1. Metadata Tests
 def test_get_module_tree(ucmdb_client):
     response = ucmdb_client.discovery.getModuleTree()
@@ -7,7 +8,7 @@ def test_get_module_tree(ucmdb_client):
     assert "children" in response.json()
 
 def test_get_use_cases(ucmdb_client):
-    response = ucmdb_client.discovery.getUseCase()
+    response = ucmdb_client.discovery.getDiscoveryUseCases()
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, dict)

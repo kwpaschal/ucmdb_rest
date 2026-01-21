@@ -17,11 +17,11 @@ from urllib.parse import quote
 
 
 class Packages:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def deletePackage(self, package):
         """
@@ -74,8 +74,8 @@ class Packages:
             }
         """
         safe_package = quote(package)
-        url = f'{self.client.base_url}/packagemanager/packages/{safe_package}'
-        return self.client.session.delete(url)
+        url = f'/packagemanager/packages/{safe_package}'
+        return self.server._request("DELETE",url)
 
     def deployPackage(self, filestoupload, package_name):
         """
@@ -134,8 +134,8 @@ class Packages:
             'file': (package_name, filestoupload),
             'type': 'application/x-zip-compressed'
         }
-        url = f'{self.client.base_url}/packagemanager/packages'
-        return self.client.session.post(url,files=files_uploaded)
+        url = '/packagemanager/packages'
+        return self.server._request("POST",url,files=files_uploaded)
 
     def exportPackage(self, package_name):
         """
@@ -155,8 +155,8 @@ class Packages:
             Binary file to be written.
         """
         safe_package = quote(package_name)
-        url = f'{self.client.base_url}/uiserver/packagemanager/resources/export?packageName={safe_package}'  # noqa: E501
-        return self.client.session.get(url)
+        url = f'/uiserver/packagemanager/resources/export?packageName={safe_package}'
+        return self.server._request("GET",url)
 
     def filterPackage(self, package):
         """
@@ -211,8 +211,8 @@ class Packages:
             }
         """
         safe_package = quote(package)
-        url = f'{self.client.base_url}/uiserver/packagemanager/packages?isPaginationEnabled=true&start=0&limit=20&sortDir=ASC&sortField=name&search={safe_package}'  # noqa: E501
-        return self.client.session.get(url)
+        url = f'/uiserver/packagemanager/packages?isPaginationEnabled=true&start=0&limit=20&sortDir=ASC&sortField=name&search={safe_package}'  # noqa: E501
+        return self.server._request("GET",url)
 
     def getContentPacks(self):
         """
@@ -249,8 +249,8 @@ class Packages:
                 }
             ]
         """
-        url = f'{self.client.base_url}/packagemanager/contentpacks'
-        return self.client.session.get(url)
+        url = '/packagemanager/contentpacks'
+        return self.server._request("GET",url)
 
     def getDiffReport(self, cpversion):
         """
@@ -271,8 +271,8 @@ class Packages:
             JSON output with Difference Report if error, otherwise 
             binary file with report.
         """
-        url = f'{self.client.base_url}/packagemanager/contentpacks/{cpversion}/diffreport'
-        return self.client.session.get(url)
+        url = f'/packagemanager/contentpacks/{cpversion}/diffreport'
+        return self.server._request("GET",url)
 
     def getPackage(self, pkg_name='A10_vthunder.zip'):
         """
@@ -295,8 +295,8 @@ class Packages:
 
         """
         safe_package = quote(pkg_name)
-        url = f'{self.client.base_url}/packagemanager/packages/{safe_package}'
-        return self.client.session.get(url)
+        url = f'/packagemanager/packages/{safe_package}'
+        return self.server._request("GET",url)
 
     def getPackages(self):
         """
@@ -347,8 +347,8 @@ class Packages:
                 - subSystemName: str
 
         """
-        url = f'{self.client.base_url}/packagemanager/packages'
-        return self.client.session.get(url)
+        url = '/packagemanager/packages'
+        return self.server._request("GET",url)
 
     def getProgress(self, package):
         """
@@ -366,8 +366,8 @@ class Packages:
             and any failed resource names.
         """
         safe_package = quote(package)
-        url = f'{self.client.base_url}/packagemanager/packages/{safe_package}/progress'
-        return self.client.session.get(url)
+        url = f'/packagemanager/packages/{safe_package}/progress'
+        return self.server._request("GET",url)
 
     def getSpecificContentPack(self, cpversion):
         """
@@ -391,8 +391,8 @@ class Packages:
             "cpDeploymentPercentage": "100%"
             }
         """
-        url = f'{self.client.base_url}/packagemanager/contentpacks/{cpversion}'
-        return self.client.session.get(url)
+        url = f'/packagemanager/contentpacks/{cpversion}'
+        return self.server._request("GET",url)
 
     def uploadContentPack(self, filestoupload, cp_name):
         """
@@ -424,5 +424,5 @@ class Packages:
                 }
         """
         files_uploaded = {'file': (cp_name, filestoupload)}
-        url = f'{self.client.base_url}/packagemanager/contentpacks'
-        return self.client.session.post(url,files=files_uploaded)
+        url = '/packagemanager/contentpacks'
+        return self.server._request("POST",url, files=files_uploaded)

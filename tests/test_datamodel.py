@@ -17,7 +17,6 @@ node_global_id = None
 
 def test_addCIs(ucmdb_client):
     global ci_list, node_global_id
-    # Use returnIdsMap=True to get the mapping of temp IDs to real IDs
     result = ucmdb_client.data_model.addCIs(myCI, returnIdsMap=True)
     
     assert result.status_code == 200

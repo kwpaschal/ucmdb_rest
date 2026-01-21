@@ -4,7 +4,6 @@ import logging
 import requests
 from requests.exceptions import RequestException
 
-# Importing all services
 from .data_flow_management import DataFlowManagement
 from .datamodel import DataModel
 from .discovery import Discovery
@@ -135,6 +134,9 @@ class UCMDBServer:
         self.system = System(self)
         self.server_version = (0,0,0)
         self._initialize_server_version()
+        self.__user = user
+        self.__password = password
+        self.server = server
 
     def _authenticate(self, user, password):
         """
@@ -183,3 +185,18 @@ class UCMDBServer:
             self.server_version = tuple(map(int,v_str.split('.')))
         except Exception:
             self.server_version = (11,6,11)
+    
+    def _request(self, method, endpoint, **kwargs):
+        url = f"{self.base_url}{endpoint}"
+        response = self.session.request(method, url, **kwargs)
+        if response.status_code >= 400:
+            print(f'\nDebug: Server responded with: {response.text}')
+        if response.status_code == 401:
+            logger.warning("Token expired.  Attempting to refresh")
+            self._authenticate(self.__user, self.__password)
+            response = self.session.request(method,url,**kwargs)
+        response.raise_for_status()
+        return response
+    
+    def __repr__(self):
+        return f"<UCMDBServer(server='{self.server}', user='{self.__user})>"

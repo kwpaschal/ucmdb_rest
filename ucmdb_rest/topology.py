@@ -11,11 +11,11 @@ Exposed Methods:
 """
 
 class Topology:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def get_all_view_results(self, view_name, chunkSize=10000):
         """
@@ -37,10 +37,7 @@ class Topology:
         dict
             A combined dictionary containing 'cis' and 'relations' lists.
         """
-        response = self.runView(view_name, chunkSize=chunkSize)
-        response.raise_for_status()
-        
-        data = response.json()
+        data = self.runView(view_name, chunkSize=chunkSize).json()
         
         all_cis = data.get('cis') or []
         all_relations = data.get('relations') or []
@@ -52,15 +49,10 @@ class Topology:
             return {"cis": all_cis, "relations": all_relations}
         
         for i in range(1, num_chunks + 1):
-            chunk_resp = self.getChunk(res_id, i)
-            chunk_resp.raise_for_status()
-            chunk_data = chunk_resp.json()
+            chunk_data = self.getChunk(res_id, i).json()
             
-            new_cis = chunk_data.get('cis') or []
-            new_relations = chunk_data.get('relations') or []
-            
-            all_cis.extend(new_cis)
-            all_relations.extend(new_relations)
+            all_cis.extend(chunk_data.get('cis') or [])
+            all_relations.extend(chunk_data.get('relations') or [])
                 
         return {"cis": all_cis, "relations": all_relations}
 
@@ -127,8 +119,8 @@ class Topology:
                 "relations": []
                 }
         '''
-        url = f'{self.client.base_url}/topology/result/{res_id}/{index}'
-        return self.client.session.get(url)
+        url_part = f'/topology/result/{res_id}/{index}'
+        return self.server._request("GET",url_part)
 
     def getChunkForPath(self, state, execution_id, chunk):
         """
@@ -156,8 +148,8 @@ class Topology:
             "path": [{"pathElementId": state, "pathElementType": state}],
             "chunkNumber": chunk
         }
-        url = f'{self.client.base_url}/uiserver/modeling/views/result/chunkForPath'
-        return self.client.session.post(url, json=body)
+        url_part = '/uiserver/modeling/views/result/chunkForPath'
+        return self.server._request("POST",url_part,json=body)
 
     def queryCIs(self, query):
         '''
@@ -194,8 +186,8 @@ class Topology:
                     "relations": []
                 }
         '''
-        url = f'{self.client.base_url}/topologyQuery'
-        return self.client.session.post(url, json=query)
+        url_part = '/topologyQuery'
+        return self.server._request("POST",url_part,json=query)
 
     def runView(self, view, includeEmptyLayout=False, chunkSize=10000):
         '''
@@ -221,5 +213,6 @@ class Topology:
                     "relations": []
                 }
         '''
-        url = f'{self.client.base_url}/topology?includeEmptyLayoutProperties={includeEmptyLayout}&chunkSize={chunkSize}'  # noqa: E501
-        return self.client.session.post(url, json=view)
+        url_part = '/topology'
+        payload = {"includeEmptyLayoutProperties": includeEmptyLayout, "chunkSize": chunkSize}
+        return self.server._request("POST", url_part, json=view, params=payload)

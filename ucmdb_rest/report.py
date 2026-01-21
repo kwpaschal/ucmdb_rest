@@ -10,18 +10,20 @@ Exposed Methods:
     changeReportsAll
 """
 
-from unittest.mock import MagicMock
-from urllib.parse import quote
+#from unittest.mock import MagicMock
+#from urllib.parse import quote
+
+import requests
 
 
 class Reports:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
             
-    def changeReportsAll(self, toTime, fromTime, view, attributes=['description', 'name']):
+    def changeReportsAll(self, toTime, fromTime, view, type="ALL", attributes=['description', 'name']):  # noqa: E501
         """
         Retrieves change reports for all elements within a specified time range.
 
@@ -33,6 +35,9 @@ class Reports:
             The start time of the report (Epoch time in milliseconds).
         view : str
             The name of the UCMDB View to scope the report.
+        type : str
+            Do we want to exclude, include attributes or show all of them.
+            Default is ALL
         attributes : list of str, optional
             A list of CI attributes to monitor for changes. 
             Default is ['description', 'name'].
@@ -56,11 +61,20 @@ class Reports:
             }
         }
         """
-        viewName = quote(view)
-        attr_string = ",".join(attributes)
-        encoded_filter = quote(f'type=ALL&attributes={attr_string}')
-        url = f'{self.client.base_url}/report/change/view/{viewName}/results?filter={encoded_filter}&dateFrom={str(fromTime)}&dateTo={str(toTime)}&start=1&pageSize=100'  # noqa: E501
-        return self.client.session.get(url)
+        if type=="ALL":
+            attributes = []
+            filter_val = "type=ALL"
+        elif type=="INCLUDE" or type=="EXCLUDE":
+            attr_filter = "%2C".join([f"attributes={a}" for a in attributes])
+            filter_val = f"type%3D{type}%26{attr_filter}"
+        url = f'/report/change/ci/{view}/results?filter={filter_val}'
+        params = {
+            "dateFrom": fromTime,
+            "dateTo": toTime,
+            "start": 1,
+            "pageSize": 100
+        }
+        return self.server._request("GET",url,params=params)
 
     def changeReportsBlacklist(self, toTime, fromTime, view, attributes=['description']):
         """
@@ -130,8 +144,8 @@ class Reports:
             'viewName': view,
             'attributes': attributes
         }
-        url = f'{self.client.base_url}/changeReports/generate/blacklist'
-        return self.client.session.post(url,json=body_json)
+        url = '/changeReports/generate/blacklist'
+        return self.server._request("POST",url,json=body_json)
 
     def changeReportsWhitelist(self, toTime, fromTime, view, attributes=['name','description']): 
         """
@@ -199,14 +213,18 @@ class Reports:
             'viewName': view,
             'attributes': attributes
         }
-        url = f'{self.client.base_url}/changeReports/generate/whitelist'
-        result = self.client.session.post(url,json=body_json)
-
-        if result.status_code == 400:
-            empty_res = MagicMock()
-            empty_res.status_code = 200
-            empty_res.json.return_value = {}
-            empty_res.text = "{}"
-            return empty_res
+        url = '/changeReports/generate/whitelist'
         
-        return result
+        try:
+            return self.server._request("POST", url, json=body_json)
+            
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 400:
+                from unittest.mock import MagicMock
+                empty_res = MagicMock()
+                empty_res.status_code = 200
+                empty_res.json.return_value = {}
+                empty_res.text = "{}"
+                return empty_res
+            
+            raise e

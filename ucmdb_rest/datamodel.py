@@ -39,11 +39,11 @@ class DataModel:
     client : UCMDBServer
         An instance of the primary UCMDB client.
     """
-    def __init__(self, client):
+    def __init__(self, server):
         """
         Initialize the service with a reference to the main level UCMDB client
         """
-        self.client = client
+        self.server = server
 
     @staticmethod
     def convertFromBase64(stringToDecode):
@@ -111,8 +111,8 @@ class DataModel:
             "returnIdsMap": str(returnIdsMap).lower(),
             "ignoreWhenCantIdentify": str(ignoreWhenCantIdentify).lower(),
         }
-        url = f"{self.client.base_url}/dataModel"
-        return self.client.session.post(url, json=ciToCreate, params=query_params)
+        url_part = "/dataModel"
+        return self.server._request("POST",url_part, json=ciToCreate, params=query_params)
 
     def deleteCIs(self, id_to_delete, isGlobalId=False):
         """
@@ -130,9 +130,9 @@ class DataModel:
         requests.Response
             A summary of the deletion result.
         """
-        url = f"{self.client.base_url}/dataModel/ci/{id_to_delete}"
+        url_part = f"/dataModel/ci/{id_to_delete}"
         params = {"isGlobalId": str(isGlobalId).lower()}
-        return self.client.session.delete(url, params=params)
+        return self.server._request("DELETE",url_part,params=params)
 
     def getClass(self, CIT):
         """
@@ -180,8 +180,8 @@ class DataModel:
         >>> print(class_def['name'])
         'node'
         """
-        url = f"{self.client.base_url}/classModel/citypes/{CIT}"
-        return self.client.session.get(url)
+        url_part = f"/classModel/citypes/{CIT}"
+        return self.server._request("GET",url_part)
 
     def retrieveIdentificationRule(self, cit="node"):
         """
@@ -203,8 +203,8 @@ class DataModel:
         >>> rule_b64 = response.json()["identification"]["ruleXml"]
         >>> xml = model.convertFromBase64(rule_b64)
         """
-        url = f"{self.client.base_url}/classModel/citypes/{cit}?withAffectedResources=false"
-        return self.client.session.get(url)
+        url_part = f"/classModel/citypes/{cit}?withAffectedResources=false"
+        return self.server._request("GET",url_part)
 
     def updateCI(self, id_to_update, update_ci):
         """
@@ -230,5 +230,5 @@ class DataModel:
                 "ignoredCis": []
             }
         """
-        url = f"{self.client.base_url}/dataModel/ci/{id_to_update}"
-        return self.client.session.put(url, json=update_ci)
+        url_part = f"/dataModel/ci/{id_to_update}"
+        return self.server._request("PUT",url_part,json=update_ci)

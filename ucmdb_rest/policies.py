@@ -21,11 +21,11 @@ class ComplianceStatus(Enum):
     NON_APPLICABLE = "NON-APPLICABLE"
 
 class Policies:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def calculateComplianceView(self, myDict):
         """
@@ -51,8 +51,8 @@ class Policies:
         >>> print(response.status_code)
         200
         """
-        url = f'{self.client.base_url}/policy/calculate?chunkSize=300'
-        return self.client.session.post(url, json=myDict)
+        url = '/policy/calculate?chunkSize=300'
+        return self.server._request("POST",url,json=myDict)
 
     def calculateView(self, view):
         """
@@ -89,8 +89,8 @@ class Policies:
         >>> NON-COMPLIANT 310
         """
         encoded_view = quote(view)
-        url = f'{self.client.base_url}/uiserver/modeling/views/{encoded_view}'
-        return self.client.session.post(url)
+        url = f'/uiserver/modeling/views/{encoded_view}'
+        return self.server._request("POST",url)
 
     def getComplainceViews(self):
         """
@@ -116,10 +116,10 @@ class Policies:
         >>>     print(view['name'], view['baseViewName'], view['policyQueries'])
         >>>
         >>> Certificates must use https Node with WebServer ['Certificates must use https']
-        >>> Kubernetes statefulset must have pod Kubernetes StatefulSet ['Kubernetes statefulset must have pod']
-        """  # noqa: E501
-        url = f'{self.client.base_url}/policy/complianceViews'
-        return self.client.session.get(url)
+        >>> Kubernetes statefulset must have pod Kubernetes StatefulSet ['Kubernetes statefulset']
+        """
+        url = '/policy/complianceViews'
+        return self.server._request("GET",url)
 
     def getChunkForPath(self, execution_id, chunk, status_type=ComplianceStatus.NON_COMPLIANT):
         """
@@ -161,8 +161,8 @@ class Policies:
             }],
             "chunkNumber": chunk
         }
-        url = f'{self.client.base_url}/policy/chunkForPath?chunkSize=300'
-        return self.client.session.post(url, json=body)
+        url = '/policy/chunkForPath?chunkSize=300'
+        return self.server._request("POST",url,json=body)
 
     def getAllResultsForPath(self, execution_id, status_type=ComplianceStatus.NON_COMPLIANT):
         """
@@ -249,8 +249,8 @@ class Policies:
         >>> print(response.status_code)
         >>> 200
         """
-        url = f'{self.client.base_url}/uiserver/modeling/views/result/numberOfElementsForPath'
-        return self.client.session.post(url,json=payload)
+        url = '/uiserver/modeling/views/result/numberOfElementsForPath'
+        return self.server._request("POST",url,json=payload)
 
     def getPolicies(self):
         """
@@ -277,8 +277,8 @@ class Policies:
         Certificates must use https Query/Policy/Security True
         Kubernetes must have pod Query/Policy/Cloud Compliance/Kubernetes False
         """
-        url = f'{self.client.base_url}/policy/policies'
-        return self.client.session.get(url)
+        url = '/policy/policies'
+        return self.server._request("GET",url)
         
     def getSpecificComplianceView(self, cv):
         """
@@ -314,5 +314,5 @@ class Policies:
         name, ensuring that it can be safely used as part of a URL.
         """
         the_name = quote(cv)
-        url = f'{self.client.base_url}/policy/complianceView/{the_name}'
-        return self.client.session.get(url)
+        url = f'/policy/complianceView/{the_name}'
+        return self.server._request("GET",url)

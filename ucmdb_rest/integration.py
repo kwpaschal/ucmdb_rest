@@ -13,11 +13,11 @@ from urllib.parse import quote
 
 
 class Integrations:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def getIntegrationDetails(self, integrationpoint, detail=False):
         """
@@ -135,8 +135,8 @@ class Integrations:
         """
         safe_ip_name = quote(integrationpoint)
         detail_str = str(detail).lower()
-        url = f'{self.client.base_url}/integration/integrationpoints/{safe_ip_name}?detail={detail_str}'  # noqa: E501
-        return self.client.session.get(url)
+        url = f'/integration/integrationpoints/{safe_ip_name}?detail={detail_str}'
+        return self.server._request("GET",url)
 
     def getIntegrationInfo(self):
         """
@@ -197,5 +197,5 @@ class Integrations:
               }
             }
         """
-        url = f'{self.client.base_url}/integration/integrationpoints'
-        return self.client.session.get(url)
+        url = '/integration/integrationpoints'
+        return self.server._request("GET",url)

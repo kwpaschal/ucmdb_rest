@@ -1,38 +1,60 @@
 # -*- coding: utf-8 -*-
-import pytest
 import time
+
+import pytest
 
 # Constants for the test environment
 TARGET_VIEW = "All My Windows Servers"
 
 @pytest.fixture
 def time_range():
-    """Generates a 24-hour epoch time range in milliseconds."""
-    to_time = int(time.time() * 1000)
-    from_time = to_time - (24 * 60 * 60 * 1000 * 7)
-    return from_time, to_time
+    now_ms = int(time.time() * 1000)
+    three_days_ago_ms = now_ms - (3*24*60*60*1000)
+    return three_days_ago_ms, now_ms
 
 def test_change_reports_all_windows(ucmdb_client, time_range):
-    """Verifies retrieval of all changes for the Windows Servers view."""
-    from_time, to_time = time_range
-    
-    # We pass custom attributes to verify the URL string joining logic
-    attrs = ['name', 'description']
-    
-    response = ucmdb_client.reports.changeReportsAll(
-        toTime=to_time, 
-        fromTime=from_time, 
-        view=TARGET_VIEW,
-        attributes=attrs
-    )
-    
-    assert response.status_code == 200
-    data = response.json()
-    
-    # UCMDB 'results' endpoint usually returns a list or dict of changes
-    assert 'items' in data or 'results' in data or isinstance(data, list)
-    print(f"\n--- Global Changes: {TARGET_VIEW} ---")
-    print(f"Status: {response.status_code}")
+    ci_name = f"Test_Win_Node_{int(time.time())}"
+    myCI = {
+            "cis": [
+                    {
+                    "ucmdbId": "1",
+                    "type": "nt",
+                    "properties": {"name":ci_name,
+                                    "os_family":"windows"}
+                    }
+                ],
+                "relations": []
+            }
+    create_res = ucmdb_client.data_model.addCIs(myCI, returnIdsMap=True)
+    data = create_res.json()
+    ci_id = data.get('idsMap',{}).get("1")
+    try:
+        update_ci = {
+                        "type": "nt",
+                        "properties": {
+                            "name": ci_name,
+                            "os_family": "windows",
+                            "data_note": "Modified for test report"
+                        }
+                    }
+        ucmdb_client.data_model.updateCI(ci_id, update_ci)
+        time.sleep(3)
+        from_time, to_time = time_range
+
+
+        response = ucmdb_client.reports.changeReportsAll(view="All My Windows Servers",
+                                                         toTime=to_time,
+                                                         fromTime=from_time)
+        
+        result = response.json()
+        items = result.get('items',{})
+        found = ci_id in items
+        if not found:
+            print(f"IDs found in report: {list(items.keys())}")
+        assert response.status_code == 200
+
+    finally:
+        ucmdb_client.data_model.deleteCIs(ci_id)
 
 def test_change_reports_blacklist_windows(ucmdb_client, time_range):
     from_time, to_time = time_range

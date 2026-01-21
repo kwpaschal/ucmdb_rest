@@ -11,11 +11,11 @@ Exposed Methods:
 """
 
 class System:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
     
     def getUCMDBVersion(self):
         """
@@ -40,8 +40,8 @@ class System:
                 "fullServerVersion": "11.8.0"
             }
         """
-        url = f'{self.client.base_url}/v1/uiserver/dashboard/versions/getVersion'
-        return self.client.session.get(url)
+        url = '/v1/uiserver/dashboard/versions/getVersion'
+        return self.server._request("GET",url)
 
     def ping(self, restrictToWriter=False, restrictToReader=False):
         """
@@ -71,8 +71,8 @@ class System:
                 }
             }
         """
-        url = f'{self.client.root_url}/ping?restrictToWriter={restrictToWriter}&restrictToReader={restrictToReader}'  # noqa: E501
-        return self.client.session.get(url)
+        url = f'{self.server.root_url}/ping?restrictToWriter={restrictToWriter}&restrictToReader={restrictToReader}'  # noqa: E501
+        return self.server._request("GET",url)
 
     def getLicenseReport(self):
         """
@@ -159,5 +159,5 @@ class System:
                 "rationOfManagementToAsset": 20
             }
         """
-        url = f'{self.client.base_url}/uiserver/license/report'
-        return self.client.session.get(url)
+        url = '/uiserver/license/report'
+        return self.server._request("GET",url)

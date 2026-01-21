@@ -81,10 +81,52 @@ def test_probeStatusDetails(ucmdb_client,active_probe_name):
     result = ucmdb_client.data_flow.probeStatusDetails('DefaultDomain', active_probe_name)
     assert result.status_code == 200
 
-def test_checkCredential(ucmdb_client,active_probe_name):
-    # Adjust "CMS_1_1" to a valid credential ID in your environment if needed
-    result = ucmdb_client.data_flow.checkCredential("CMS_1_1", active_probe_name, "10.0.0.1")
-    assert result.status_code != 404
+def test_checkCredential_ad_hoc(ucmdb_client, active_probe_name):
+    query_body = {
+        "nodes": [
+            {
+                "type": "ntcmd",
+                "queryIdentifier": "ntcmd",
+                "visible": True,
+                "includeSubtypes": True,
+                "layout": ["display_label", "application_ip", "last_discovered_by_probe", "credentials_id"],
+                "attributesConditions": [ 
+                    {
+                        "attributeName": "last_discovered_by_probe",
+                        "operator": "equals", 
+                        "value": active_probe_name
+                    }
+                ]
+            }
+        ],
+        "relations": []
+    }
+
+    response = ucmdb_client.topology.queryCIs(query_body)
+    all_cis = response.json().get("cis", [])
+    
+    matching_cis = [
+        ci for ci in all_cis 
+        if ci.get("properties", {}).get("last_discovered_by_probe") == active_probe_name
+    ]
+
+    assert len(matching_cis) > 0, (
+        f"Filtered out all {len(all_cis)} CIs because none matched probe: {active_probe_name}"
+    )
+
+    target_ci = matching_cis[0]
+    props = target_ci.get("properties", {})
+    
+    cred_id = props.get("credentials_id")
+    ip_addr = props.get("application_ip")
+    probe_name = props.get("last_discovered_by_probe")
+
+    print(f"Found {len(matching_cis)} matches. Testing Credential: {cred_id} on {ip_addr}")
+
+    result = ucmdb_client.data_flow.checkCredential(cred_id, probe_name, ip_addr)
+    
+    assert result.status_code == 200
+    print(f"Successfully validated credential for {ip_addr} via {probe_name}")
 
 def test_getAllProtocols(ucmdb_client):
     result = ucmdb_client.data_flow.getAllProtocols()

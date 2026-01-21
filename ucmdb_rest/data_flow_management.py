@@ -16,11 +16,11 @@ from urllib.parse import urlencode
 
 
 class DataFlowManagement:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def addRange(self, range_to_add, probe_name):
         """
@@ -55,8 +55,8 @@ class DataFlowManagement:
             }
             ]
         """
-        url = f'{self.client.base_url}/dataflowmanagement/probes/{probe_name}/ranges'
-        return self.client.session.post(url, json=range_to_add)
+        url_part = f'/dataflowmanagement/probes/{probe_name}/ranges'
+        return self.server._request("POST",url_part,json=range_to_add)
 
     def checkCredential (self, credential_id, probe, ip_addr, timeout=60000):
         """
@@ -86,8 +86,8 @@ class DataFlowManagement:
             'timeout':timeout
         }
 
-        url = f'{self.client.base_url}/dataflowmanagement/credentials/'+credential_id+'/availability'  # noqa: E501
-        return self.client.session.post(url,json=body_json)
+        url_part = '/dataflowmanagement/credentials/'+credential_id+'/availability'
+        return self.server._request("POST",url_part,json=body_json)
 
     def createNTCMDCredential(self, my_protocol):
         """
@@ -107,8 +107,8 @@ class DataFlowManagement:
             A string with the credential ID. For example:
             "10_1_CMS"
         """
-        url = f'{self.client.base_url}/dataflowmanagement/credentials'
-        return self.client.session.post(url,json=my_protocol)
+        url_part = '/dataflowmanagement/credentials'
+        return self.server._request("POST",url_part,json=my_protocol)
 
     def deleteProbe (self, probe_names):
         """
@@ -124,9 +124,9 @@ class DataFlowManagement:
             For example:  {}
 
         """
-        url = f'{self.client.base_url}/dataflowmanagement/probes'
+        url_part = '/dataflowmanagement/probes'
         params = {'probenames': probe_names}
-        return self.client.session.delete(url, params=params)
+        return self.server._request("DELETE",url_part,params=params)
 
     def deleteRange(self, delete_range, probe_name):
         """
@@ -157,9 +157,8 @@ class DataFlowManagement:
             Should be like an empty dictionary:
             For example:  {}
         """
-        url = f'{self.client.base_url}/dataflowmanagement/probes/{probe_name}/ranges'
-        return self.client.session.delete(url,json=delete_range)
-
+        url_part = f'/dataflowmanagement/probes/{probe_name}/ranges'
+        return self.server._request("DELETE",url_part,json=delete_range)
 
     def do_availability_check(self, ci_to_check, probe, timeout=60000):
         """
@@ -188,8 +187,8 @@ class DataFlowManagement:
             'ipAddress': ci_to_check['application_ip'],
             'timeout': timeout
         }
-        url = f'{self.client.base_url}/dataflowmanagement/credentials/' + str(ci_to_check['credentials_id']) + '/availability'  # noqa: E501
-        return self.client.session.post(url, json=json_body)
+        url_part = '/dataflowmanagement/credentials/' + str(ci_to_check['credentials_id']) + '/availability'  # noqa: E501
+        return self.server._request("POST",url_part,json=json_body)
 
     def getAllDomains(self):
         """
@@ -215,8 +214,8 @@ class DataFlowManagement:
             }
             ]
         """
-        url = f'{self.client.base_url}/dataflowmanagement/domains'
-        return self.client.session.get(url)
+        url_part = '/dataflowmanagement/domains'
+        return self.server._request("GET",url_part)
 
     def getAllCredentials(self):
         """
@@ -274,8 +273,8 @@ class DataFlowManagement:
             ]
 
         """
-        url = f'{self.client.base_url}/dataflowmanagement/credentials'
-        return self.client.session.get(url)
+        url_part = '/dataflowmanagement/credentials'
+        return self.server._request("GET",url_part)
 
     def getAllProtocols(self):
         """
@@ -332,8 +331,8 @@ class DataFlowManagement:
             }
 
         """
-        url = f'{self.client.base_url}/dataflowmanagement/protocols'
-        return self.client.session.get(url)
+        url = '/dataflowmanagement/protocols'
+        return self.server._request("GET",url)
 
     def getCredentialProfiles(self):
         """
@@ -377,8 +376,8 @@ class DataFlowManagement:
                 ]
             }
         """
-        url = f'{self.client.base_url}/discovery/credentialprofiles'
-        return self.client.session.get(url)
+        url = '/discovery/credentialprofiles'
+        return self.server._request("GET",url)
 
     def getProbeInfo(self):
         """
@@ -413,8 +412,8 @@ class DataFlowManagement:
             }
 
         """
-        url = f'{self.client.base_url}/dataflowmanagement/probes'
-        return self.client.session.get(url)
+        url = '/dataflowmanagement/probes'
+        return self.server._request("GET",url)
 
     def getProbeRanges(self, probeName):
         """
@@ -462,8 +461,8 @@ class DataFlowManagement:
                 "tokenCompatible": false
             }
         """
-        url = f'{self.client.base_url}/dataflowmanagement/probes/{probeName}'
-        return self.client.session.get(url)
+        url = f'/dataflowmanagement/probes/{probeName}'
+        return self.server._request("GET",url)
 
     def getProtocol(self, protocol_id):
         """
@@ -610,8 +609,8 @@ class DataFlowManagement:
                 "protocolName": "ntadminprotocol"
             }
         """
-        url = f'{self.client.base_url}/dataflowmanagement/protocols/{protocol_id}'
-        return self.client.session.get(url)
+        url = f'/dataflowmanagement/protocols/{protocol_id}'
+        return self.server._request("GET",url)
 
     def probeStatus(self):
         """
@@ -666,8 +665,8 @@ class DataFlowManagement:
             }
 
         """
-        url = f'{self.client.base_url}/uiserver/probeService/dashboard/summary'
-        return self.client.session.get(url)
+        url = '/uiserver/probeService/dashboard/summary'
+        return self.server._request("GET",url)
 
     def probeStatusDetails(self, domain, probe):
         """
@@ -775,8 +774,8 @@ class DataFlowManagement:
             }
 
         """
-        url = f'{self.client.base_url}/uiserver/probeService/dashboard/domain/{domain}/probe/{probe}/runtime'  # noqa: E501
-        return self.client.session.get(url)
+        url = f'/uiserver/probeService/dashboard/domain/{domain}/probe/{probe}/runtime'  # noqa: E501
+        return self.server._request("GET",url)
 
     def queryIPs(self, ip_addr):
         """
@@ -831,8 +830,8 @@ class DataFlowManagement:
                 find_ip = myserver.data_flow_management.queryIPs("10.1.1.1")
                 ```
         """
-        url = f'{self.client.base_url}/dataflowmanagement/probes?queriedIpAddress={ip_addr}'
-        return self.client.session.get(url)
+        url = f'/dataflowmanagement/probes?queriedIpAddress={ip_addr}'
+        return self.server._request("GET",url)
 
     def queryProbe(self,ip_addr="",desc_filter="",domains=None,fields="",probestat=None,versioncomp=None):  # noqa: E501
         """
@@ -918,8 +917,8 @@ class DataFlowManagement:
             params["versionCompatibility"] = versioncomp
 
         param_string = urlencode(params, doseq=True, safe="")
-        url = f'{self.client.base_url}/dataflowmanagement/probes?{param_string}'
-        return self.client.session.get(url)
+        url = f'/dataflowmanagement/probes?{param_string}'
+        return self.server._request("GET",url)
 
     def updateRange(self, range_to_add, probe_name):
         """
@@ -966,5 +965,5 @@ class DataFlowManagement:
                 ]
             }
         """
-        url = f'{self.client.base_url}/dataflowmanagement/probes/{probe_name}/ranges'
-        return self.client.session.patch(url,json=range_to_add)
+        url = f'/dataflowmanagement/probes/{probe_name}/ranges'
+        return self.server._request("PATCH",url, json=range_to_add)

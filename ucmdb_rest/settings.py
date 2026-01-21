@@ -14,11 +14,11 @@ Exposed Methods:
 """
 
 class Settings:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def addRecipients(self, recipient_dict):
         """
@@ -52,8 +52,8 @@ class Settings:
                     }
                 ]
         """
-        url = f'{self.client.base_url}/administration/recipients'
-        return self.client.session.post(url,json=recipient_dict)
+        url = '/administration/recipients'
+        return self.server._request("POST",url,json=recipient_dict)
 
     def deleteRecipients(self, id_to_delete):
         """
@@ -72,8 +72,8 @@ class Settings:
             returned.
 
         """
-        url = f'{self.client.base_url}/administration/recipients?ids={id_to_delete}'
-        return self.client.session.delete(url)
+        url = f'/administration/recipients?ids={id_to_delete}'
+        return self.server._request("DELETE",url)
 
     def getRecipients(self):
         """
@@ -101,8 +101,8 @@ class Settings:
                     }
                 ]
         """
-        url = f'{self.client.base_url}/administration/recipients'
-        return self.client.session.get(url)
+        url = '/administration/recipients'
+        return self.server._request("GET",url)
 
     def getSetting(self, setting, locale='en'):
         """
@@ -144,8 +144,8 @@ class Settings:
             "displayType": "string"
             }
         """
-        url = f'{self.client.base_url}/settings/{setting}?locale={locale}'
-        return self.client.session.get(url)
+        url = f'/settings/{setting}?locale={locale}'
+        return self.server._request("GET",url)
 
     def setSetting(self, setting, body, locale='en'):
         """
@@ -187,8 +187,8 @@ class Settings:
                     "displayType": "email"
                 }
         """
-        url = f'{self.client.base_url}/settings/{setting}?locale={locale}'
-        return self.client.session.put(url, json=body)
+        url = f'/settings/{setting}?locale={locale}'
+        return self.server._request("PUT",url,json=body)
 
     def updateRecipients(self, id_to_update, dict_to_update):
         """
@@ -231,5 +231,5 @@ class Settings:
                 }
 
         """
-        url = f'{self.client.base_url}/administration/recipients/{id_to_update}'
-        return self.client.session.put(url, json=dict_to_update)
+        url = f'/administration/recipients/{id_to_update}'
+        return self.server._request("PUT", url, json=dict_to_update)

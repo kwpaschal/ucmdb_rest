@@ -1,5 +1,6 @@
 import pytest
 
+
 def test_get_information_raw(ucmdb_client):
     """Verify raw payload submission to exposeCI."""
     payload = {
@@ -16,9 +17,9 @@ def test_get_information_raw(ucmdb_client):
     assert isinstance(response.json(), list)
 
 def test_search_nodes_helper(ucmdb_client):
-    """Verify the search_nodes_by_label helper method."""
+    """Verify the search_by_label helper method."""
     # Using a wildcard that should return at least one result in most labs
-    response = ucmdb_client.expose.search_nodes_by_label("%")
+    response = ucmdb_client.expose.search_by_label("%")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)

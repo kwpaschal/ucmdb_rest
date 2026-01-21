@@ -10,11 +10,11 @@ Exposed Methods:
 """
 
 class RetrieveLDAP:
-    def __init__(self, client):
+    def __init__(self, server):
         """
-        Initialize the service with a reference to the main level UCMDB client
+        Initialize the service with a reference to the main level UCMDB server
         """
-        self.client = client
+        self.server = server
 
     def getLDAPSettings(self):
         """
@@ -39,5 +39,5 @@ class RetrieveLDAP:
             }
         ]
         """
-        url = f'{self.client.base_url}/ldap/settings'
-        return self.client.session.get(url)
+        url = '/ldap/settings'
+        return self.server._request("GET",url)
