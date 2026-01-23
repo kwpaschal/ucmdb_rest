@@ -16,3 +16,30 @@ def test_integration_list_and_details(ucmdb_client):
             break 
     else:
         pytest.skip("No integration points found to test.")
+
+def test_clear_cache(ucmdb_client):
+    ipoints = ucmdb_client.integrations.getIntegrationInfo().json()
+    
+    # Define system integrations to skip
+    system_points = {'HistoryDataSource', 'UCMDBDiscovery'}
+    
+    dict_to_clear = {}
+
+    for name, info in ipoints.items():
+        if name in system_points:
+            continue
+            
+        # Check both Population and Push jobs
+        jobs = info.get('dataPopulationJobs', []) + info.get('dataPushJobs', [])
+        
+        if jobs:
+            # We found a target! Let's take the first job's displayID
+            job_name = jobs[0]['displayID']
+            dict_to_clear = {name: [job_name]}
+            break # Exit the loop once we have a target for the test
+
+    # Ensure we actually found something before calling clear_cache
+    assert dict_to_clear, "No valid integration jobs found to test cache clearing."
+    
+    clear = ucmdb_client.integrations.clear_cache(dict_to_clear)
+    assert clear.status_code == 200

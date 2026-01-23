@@ -1,6 +1,19 @@
 # UCMDB REST Python Library
 
 A modern, object-oriented Python 3.6+ wrapper for the OpenText Universal Configuration Management Database (UCMDB) REST API. This library centralizes UCMDB interactions through a unified client, providing type-safe Enums and automated pagination.
+## Setup and Authentication
+This library contains some examples that assume a `credentials.json` file is in the same direcory as the code.
+
+1. Copy `credentials.json.example` to `credentials.json`
+2. Update the values with your UCMDB server details
+
+| Key | Description |
+| :--- | :--- |
+| **user** | UCMDB Username |
+| **password** | UCMDB Password |
+| **server** | FQDN or IP of the UCMDB Server |
+| **port** | REST API port (Default 8443) |
+| **ssl_validation** | Boolean (false to skip certificate checks) |
 
 ## Quick Start
 
@@ -11,10 +24,17 @@ from ucmdb_rest import UCMDBServer
 from ucmdb_rest.policies import ComplianceStatus
 
 # Initialize connection
+cred_path = os.path.join(os.path.dirname(__file__), 'credentials.json')
+with open(cred_path, 'r') as f:
+    creds = json.load(f)
+
+
 client = UCMDBServer(
-    server="ucmdb.example.com", 
-    user="admin", 
-    password="password"
+    user=creds['user'],
+    password=creds['password'],
+    server=creds['server'],
+    port=creds.get('port', 8443),
+    ssl_validation=creds.get('ssl_validation', False)
 )
 
 # Run a Policy Audit with automatic chunking
@@ -71,8 +91,10 @@ mkdocs serve
 ## Release History
 
 ## Release History
-
-* **2.0.0 (Current)**
+* **2.0.1 (Current)**
+  * Fixed a bunch of failing tests
+  * Beginning to add Examples
+* **2.0.0**
   * **Major Architecture Milestone**: Completed the migration of all legacy `rest.py` components.
   * Re-engineered core modules into a modular, object-oriented framework.
   * Standardized response handling using `requests.Response` objects across all modules.

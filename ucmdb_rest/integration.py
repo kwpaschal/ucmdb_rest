@@ -7,7 +7,7 @@ It supports both Data Population (pulling data into UCMDB) and Data Push
 (sending data to external systems).
 
 Exposed Methods:
-    getIntegrationDetails, getIntegrationInfo
+    getIntegrationDetails, getIntegrationInfo, clear_cache
 """
 from urllib.parse import quote
 
@@ -18,6 +18,29 @@ class Integrations:
         Initialize the service with a reference to the main level UCMDB server
         """
         self.server = server
+
+    def clear_cache(self, job_details):
+        """
+        This function clears the integration cache for a specific job (or jobs)
+        inside a specific integration point
+
+        Parameters
+        ----------
+        job_details : dict
+            This is a dictionary which contains the integration point and which 
+            jobs are to be cleared.  Use the getIntegrationDetails to retrieve
+            the Integration Name and the Job names.  For example:
+            {"IntegrationName":["JobName1","JobName2"]}
+        
+        Returns
+        -------
+        Request.response
+          A Requests response containing the return status code of the clear
+          or some text with an error message
+        """
+        url = '/integration/jobs'
+        params = {'operation':'clearcache'}
+        return self.server._request("PATCH", url, params=params, json=job_details)
 
     def getIntegrationDetails(self, integrationpoint, detail=False):
         """

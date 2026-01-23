@@ -89,7 +89,7 @@ def test_checkCredential_ad_hoc(ucmdb_client, active_probe_name):
                 "queryIdentifier": "ntcmd",
                 "visible": True,
                 "includeSubtypes": True,
-                "layout": ["display_label", "application_ip", "last_discovered_by_probe", "credentials_id"],
+                "layout": ["display_label", "application_ip", "last_discovered_by_probe", "credentials_id"],  # noqa: E501
                 "attributesConditions": [ 
                     {
                         "attributeName": "last_discovered_by_probe",

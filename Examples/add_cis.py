@@ -1,6 +1,11 @@
+import json
 import logging
+import os
 
+import urllib3
 from ucmdb_rest import UCMDBAuthError, UCMDBServer
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 1. SETUP LOGGING
 # We configure the root logger to show both our messages and the library's messages
@@ -15,12 +20,20 @@ def main():
     try:
         # If you want to see deep details (like raw URLs), uncomment the next line:
         # logging.getLogger("ucmdb_rest").setLevel(logging.DEBUG)
-        
+        # Load credentials from credentials.json in the same path
+        cred_path = os.path.join(os.path.dirname(__file__), 'credentials.json')
+        with open(cred_path, 'r') as f:
+            creds = json.load(f)
+
+
         client = UCMDBServer(
-            user="admin", 
-            password="password123", 
-            server="ucmdb-server.example.com"
+            user=creds['user'],
+            password=creds['password'],
+            server=creds['server'],
+            port=creds.get('port', 8443),
+            ssl_validation=creds.get('ssl_validation', False)
         )
+       
         logger.info(f"Connected to UCMDB Version: {client.server_version}")
 
         # 3. PREPARE DATA
@@ -53,7 +66,7 @@ def main():
             }
         # 4. EXECUTE AND LOG RESULTS
         logger.info("Attempting to add new Node CI...")
-        result = client.topology.add_cis(ci_to_add)
+        result = client.data_model.addCIs(ci_to_add)
         
         # We log the resulting ID returned by the library
         logger.info(f"Successfully added CI. UCMDB ID: {result}")

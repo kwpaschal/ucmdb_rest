@@ -38,3 +38,6 @@ tests/credentials.json
 .coverage
 htmlcov/
 site/
+
+# Examples credentials.json
+Examples/credentials.json
