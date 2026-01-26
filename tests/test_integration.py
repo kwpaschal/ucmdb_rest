@@ -22,7 +22,8 @@ def test_clear_cache(ucmdb_client):
     
     # Define system integrations to skip
     system_points = {'HistoryDataSource', 'UCMDBDiscovery'}
-    
+    integration_point = ''
+    job_name = ''
     dict_to_clear = {}
 
     for name, info in ipoints.items():
@@ -35,6 +36,7 @@ def test_clear_cache(ucmdb_client):
         if jobs:
             # We found a target! Let's take the first job's displayID
             job_name = jobs[0]['displayID']
+            integration_point = name
             dict_to_clear = {name: [job_name]}
             break # Exit the loop once we have a target for the test
 
@@ -43,3 +45,12 @@ def test_clear_cache(ucmdb_client):
     
     clear = ucmdb_client.integrations.clear_cache(dict_to_clear)
     assert clear.status_code == 200
+    # Now call activate function
+    activate = ucmdb_client.integrations.setEnabledState(integration_point,True)
+    assert activate.status_code == 200
+    # Now run a delta sync
+    sync = ucmdb_client.integrations.syncIntegrationPointJob(integration_point,
+                                                             job_name,
+                                                             'population_delta')
+    assert sync.status_code == 200
+    

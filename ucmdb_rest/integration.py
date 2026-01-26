@@ -222,3 +222,87 @@ class Integrations:
         """
         url = '/integration/integrationpoints'
         return self.server._request("GET",url)
+    def setEnabledState(self, integration_id, enabled=True):
+        """
+        This method will either enable or disable a given integration point.
+        
+        Parameters
+        ----------
+        integration_id : str
+            An integration point name.
+        enabled : bool
+            This is to enable (True) or Disable (False) the integration point.
+
+        Returns
+        -------
+        requests.Response
+            A dictionary object containing the details of a specific 
+            integration point.
+            for Example:
+              {
+                "errorCode": 200,
+                "errorSource": null,
+                "message": {
+                  "code": 2200,
+                  "parameter": null,
+                  "description": null,
+                  "errorParametersValues": [
+                    "Test_Excel_import"
+                  ],
+                  "errorMap": null,
+                  "parametrizedError": true
+                },
+                "details": null,
+                "recommendedActions": null,
+                "nestedErrors": null,
+                "data": null
+              }
+        """
+        url = f'/integration/integrationpoints/{integration_id}'
+        params = {'enabled':enabled}
+        return self.server._request("PATCH", url, params=params)
+    
+    def syncIntegrationPointJob(self, integration_id, job_id, operationtype="population_full"):
+        """
+        This function will run a synchronization of a current job under an integration 
+        point.  It can run population_full, population_delta, push_full or push_delta
+
+        Parameters
+        ----------
+        integration_id : str
+            An integration point name.
+        job_id : str
+            The name of the job to run the action on
+        operationtype : str
+            The operations, restricted to this list: population_full, population_delta, push_full
+            or push_delta
+
+        Returns
+        -------
+        requests.Response
+            A dictionary object containing the results of the operation on the job inside the
+            integration point.
+            For Example:
+            {
+              "errorCode": 200,
+              "errorSource": null,
+              "message": {
+                "code": 13200,
+                "parameter": null,
+                "description": null,
+                "errorParametersValues": [
+                  "POPULATION_DELTA"
+                ],
+                "errorMap": null,
+                "parametrizedError": true
+              },
+              "details": null,
+              "recommendedActions": null,
+              "nestedErrors": null,
+              "data": null
+            }
+        """
+        params = {'operationtype':operationtype}
+        job_id = quote(job_id)
+        url = f'/integration/integrationpoints/{integration_id}/jobs/{job_id}'
+        return self.server._request("PATCH",url, params=params)

@@ -7,6 +7,11 @@ from ucmdb_rest import UCMDBAuthError, UCMDBServer
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+"""
+Use case:  How can I add some CIs to UCMDB?  This example sets up some logging, creates the ucmdb
+client, creates a unix CI with an attached running software and then sends it.
+"""
+
 # 1. SETUP LOGGING
 # We configure the root logger to show both our messages and the library's messages
 logging.basicConfig(
