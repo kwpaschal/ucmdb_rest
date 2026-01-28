@@ -21,31 +21,30 @@ The library uses a central `UCMDBServer` to manage authentication and session pe
 
 ```python
 from ucmdb_rest import UCMDBServer
-from ucmdb_rest.policies import ComplianceStatus
 
-# Initialize connection
-cred_path = os.path.join(os.path.dirname(__file__), 'credentials.json')
-with open(cred_path, 'r') as f:
-    creds = json.load(f)
+# Initialize client (assumes credentials.json exists)
+client = UCMDBServer.from_json('credentials.json')
 
+# Quick connectivity check
+print(f"Connected to: {client.server_version}")
 
-client = UCMDBServer(
-    user=creds['user'],
-    password=creds['password'],
-    server=creds['server'],
-    port=creds.get('port', 8443),
-    ssl_validation=creds.get('ssl_validation', False)
-)
-
-# Run a Policy Audit with automatic chunking
-view_name = "Node Compliance View"
-results = client.policies.getAllResultsForPath(
-    view_name, 
-    status_type=ComplianceStatus.NON_COMPLIANT
-)
-
-print(f"Retrieved {len(results)} non-compliant CIs.")
+# Get detailed version info
+version = client.system.getUCMDBVersion().json()
+print(f"Product: {version['productName']}")
+print(f"Content Pack: {version['contentPackVersion']}")
 ```
+## Practical Examples
+To help you get started quickly, here are some example standalone scripts
+* **`add_cis.py`**: Create CIs and Relationships with custom properties
+* **`delete_cis.py`**: Delete CIs by their UCMDB ID
+* **`get_recon_rule.py`**: Display a reconciliation rule for a CI Type
+* **`initialize_get_version.py`**: Display version information about the UCMDB Server
+* **`query_topology`**: Run a UCMDB View and get the information
+* **`search_and_expose_ci.py`**: Search for a CI by name and get specific properties
+* **`show_content_packs.py`**: Display current content pack information
+* **`show_license_report.py`**: Display a license report from UCMDB
+
+see [Examplese Documentation](./Examples/README.md) for detailed setup and usage.
 ## Functional Modules
 
 The library is organized into specialized modules to mirror the UCMDB API ecosystem:
