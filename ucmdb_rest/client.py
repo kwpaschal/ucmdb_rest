@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 
 import requests
@@ -22,7 +23,6 @@ logger = logging.getLogger("ucmdb_rest")
 
 class UCMDBAuthError(Exception):
     """Raised when UCMDB authentication fails."""
-
     pass
 
 
@@ -115,6 +115,10 @@ class UCMDBServer:
         self.client_context = client_context
         logger.info(f'Initializing UCMDB Server connection to {server}')
 
+        self.__user = user
+        self.__password = password
+        self.server = server
+        
         # Authenticate immediately
         self.token = self._authenticate(user, password)
 
@@ -134,27 +138,39 @@ class UCMDBServer:
         self.system = System(self)
         self.server_version = (0,0,0)
         self._initialize_server_version()
-        self.__user = user
-        self.__password = password
-        self.server = server
+
+    @classmethod
+    def from_json(cls, config_path):
+        """
+        Initialize a UCMDBServer instance from a configuration file.
+
+        Parameters
+        ----------
+        config_path : str
+            The path to the JSON file containing credentials and server details.
+
+        Returns
+        -------
+        UCMDBServer
+            An authenticated instance of the UCMDBServer client.
+        """
+        with open(config_path,'r') as f:
+            creds = json.load(f)
+        return cls(user = creds['user'],
+                   password=creds['password'],
+                   server=creds['server'],
+                   port=creds.get('port', 8443),
+                   ssl_validation=creds.get('ssl_validation', False)
+                )
 
     def _authenticate(self, user, password):
         """
-        Authenticate with the UCMDB server and retrieves a token.
-
-        This method sends a POST request to the /authenticate endpoint. 
-        Upon success, it updates the session headers with the new token.
+        Retrieves a session token and updates the session headers.
 
         Returns
         -------
         str
             The retrieved authentication token.
-
-        Raises
-        ------
-        UCMDBAuthError
-            If authentication fails due to invalid credentials or server 
-            unreachability.
         """
         payload = {"username": user, "password": password, "clientContext": self.client_context}
 
@@ -177,7 +193,8 @@ class UCMDBServer:
         
     def _initialize_server_version(self):
         """
-        Uses the system.getUCMDBVersion method to retrieve the version of this UCMDB server
+        Retrieves and parses the UCMDB server version into a tuple.  This can be used to restrict a
+        function to running on a specific version 'or higher'
         """
         try:
             server_ver = self.system.getUCMDBVersion().json()
@@ -187,6 +204,23 @@ class UCMDBServer:
             self.server_version = (11,6,11)
     
     def _request(self, method, endpoint, **kwargs):
+        """
+        Internal helper for making HTTP requests with automatic token refresh.
+
+        Parameters
+        ----------
+        method : str
+            HTTP method (GET, POST, PUT, DELETE).
+        endpoint : str
+            The API endpoint (e.g., '/topology/cis').
+        **kwargs : dict
+            Additional arguments passed to the requests call.
+
+        Returns
+        -------
+        requests.Response
+            The HTTP response object.
+        """
         url = f"{self.base_url}{endpoint}"
         response = self.session.request(method, url, **kwargs)
         if response.status_code >= 400:

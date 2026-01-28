@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -17,26 +16,14 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-logger = logging.getLogger("add_cis_example")
+logger = logging.getLogger("run view example")
 
 def main():
     # 2. INITIALIZE CLIENT
     try:
-        # If you want to see deep details (like raw URLs), uncomment the next line:
-        # logging.getLogger("ucmdb_rest").setLevel(logging.DEBUG)
-        # Load credentials from credentials.json in the same path
-        cred_path = os.path.join(os.path.dirname(__file__), 'credentials.json')
-        with open(cred_path, 'r') as f:
-            creds = json.load(f)
-
-
-        client = UCMDBServer(
-            user=creds['user'],
-            password=creds['password'],
-            server=creds['server'],
-            port=creds.get('port', 8443),
-            ssl_validation=creds.get('ssl_validation', False)
-        )
+        script_dir = os.path.dirname(__file__)
+        cred_path = os.path.join(script_dir,'credentials.json')
+        client = UCMDBServer.from_json(cred_path)
        
         logger.info(f"Connected to UCMDB Version: {client.server_version}")
 

@@ -7,7 +7,7 @@ from ucmdb_rest import UCMDBAuthError, UCMDBServer
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 """
-Use case:  I need to get the version information from UCMDB?
+Use case:  How can I delete one or more CIs from UCMDB?
 """
 
 logging.basicConfig(
@@ -24,16 +24,16 @@ def main():
        
         logger.info(f"Connected to UCMDB Version: {client.server_version}")
 
+        id_to_delete = input('Enter the UCMDB ID to remove: ')
+        logger.info(f'Attempting to delete id: {id_to_delete}')
         try:
-            version = client.system.getUCMDBVersion()
-            version_data = version.json()
-            print(f'Product: {version_data["productName"]}')
-            print(f'Server Version: {version_data["fullServerVersion"]}')
-            print(f'Content Pack: {version_data["contentPackVersion"]}')
-            print(f'Server Build: {version_data["serverBuildNumber"]}')
-            print(f'My server version from the client: {client.server_version}')
-            print(version_data)
+            response = client.data_model.deleteCIs(id_to_delete)
 
+            if response.status_code == 200:
+                logger.info(f'Successfully deleted {id_to_delete}')
+            else:
+                logger.error(f'Failed to delete.  Status: {response.status_code}')
+                logger.error(f'Response: {response.text}')
         except Exception as e:
             logger.critical(f"An unexpected error occurred: {e}", exc_info=True)
 
