@@ -35,7 +35,6 @@ UCMDB Server information
 * `show_license_report.py`: Displays an audit of the licence consumption breaking down by unit type
 ## Usage
 To run any example, ensure you are in the root directory of the project and run:
-```
-bash
+```bash
 python Examples/search_and_expose_ci.py
 ```

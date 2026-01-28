@@ -63,9 +63,10 @@ nav:
           - Topology: reference/topology.md
           - Utilities: reference/utils.md
   - Examples:
+    - Overview: examples/index.md
     - Data Model:
-      - Overview: examples/README.md
       - Adding CIs: examples/data_model/add_cis.md
+      - Searching CIs: examples/data_model/search_and_expose_ci.md
 
 
 markdown_extensions:

@@ -44,7 +44,7 @@ To help you get started quickly, here are some example standalone scripts
 * **`show_content_packs.py`**: Display current content pack information
 * **`show_license_report.py`**: Display a license report from UCMDB
 
-see [Examplese Documentation](./Examples/README.md) for detailed setup and usage.
+see [Examplese Documentation](./examples/index.md) for detailed setup and usage.
 ## Functional Modules
 
 The library is organized into specialized modules to mirror the UCMDB API ecosystem:

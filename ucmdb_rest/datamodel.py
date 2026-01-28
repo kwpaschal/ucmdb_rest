@@ -33,11 +33,6 @@ class DataModel:
     This module provides methods to create, update, and delete Configuration Items (CIs)
     and Relationships, as well as tools to inspect the CI Type (Class) definitions
     and identification rules.
-
-    Parameters
-    ----------
-    client : UCMDBServer
-        An instance of the primary UCMDB client.
     """
     def __init__(self, server):
         """

@@ -35,8 +35,8 @@ class Integrations:
         Returns
         -------
         Request.response
-          A Requests response containing the return status code of the clear
-          or some text with an error message
+            A Requests response containing the return status code of the clear
+            or some text with an error message
         """
         url = '/integration/jobs'
         params = {'operation':'clearcache'}
