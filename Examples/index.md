@@ -20,21 +20,16 @@ All examples in this directory use a shared `credentials.json` file for authenti
 ```
 # Available Examples
 ## Data Management
-* `add_cis.py`: Demonstrates how to push new CIs and Relationships into UCMDB.
-* `delete_cis.py`: Shows how to remove specific CIs from UCMDB using their UCMDB IDs.
+* `add_cis.py`: Demonstrates how to push new CIs and Relationships into UCMDB.* — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/add_cis.py)
+* `delete_cis.py`: Shows how to remove specific CIs from UCMDB using their UCMDB IDs. — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/delete_cis.py)
 * `search_and_expose_ci.py`: Uses the powerful `search_by_label` function to find CIs 
-matching a pattern (e.g. %Server%) and retrieve specific attributes in one request
+matching a pattern (e.g. %Server%) and retrieve specific attributes in one request. — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/search_and_expose_ci.py)
 ## Discovery and Troubleshooting
 * `get_recon_rule.py`: Displays the identification rule (reconciliation rule) for a specific
-CI Type and decodes the Base64 `ruleXml` for easy reading
-* `query_topology.py`: Executes a named TQL or View and retrieves the resulting topology map
+CI Type and decodes the Base64 `ruleXml` for easy reading. — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/get_recon_rule.py)
+* `query_topology.py`: Executes a named TQL or View and retrieves the resulting topology map. — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/query_topology.py)
 ## System Reporting
 * `initialize_get_version.py`: A simple 'Hello World' script to test the connection and display
-UCMDB Server information
-* `show_content_packs.py`: Displays the version and deployment status of Content Packs
-* `show_license_report.py`: Displays an audit of the licence consumption breaking down by unit type
-## Usage
-To run any example, ensure you are in the root directory of the project and run:
-```bash
-python Examples/search_and_expose_ci.py
-```
+UCMDB Server information. — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/initialize_get_version.py)
+* `show_content_packs.py`: Displays the version and deployment status of Content Packs. — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/show_content_packs.py)
+* `show_license_report.py`: Displays an audit of the licence consumption breaking down by unit type. — [View on GitHub](https://github.com/kwpaschal/ucmdb_rest/blob/main/Examples/show_license_report.py)
