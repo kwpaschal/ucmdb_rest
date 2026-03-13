@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,24 +7,31 @@ name = "ucmdb_rest"
 version = "2.0.1"
 description = "A modular Python client for the UCMDB REST API"
 readme = "README.md"
+license = "MIT"
 authors = [
-    { name = "Keith Paschal" }
+    { name = "Keith Paschal", email = "kw.paschal@gmail.com" }
 ]
 requires-python = ">=3.6"
 dependencies = [
     "requests>=2.25.0",
 ]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/kwpaschal/ucmdb_rest"
+
+[tool.setuptools.packages.find]
+include = ["ucmdb_rest*"]
+
 [tool.ruff]
-# The folder where your code lives
 src = ["ucmdb_rest"]
-# Allow lines to be a bit longer (UCMDB URLs can be long!)
 line-length = 100
 
 [tool.ruff.lint]
-# Select the rules you want (E = Error, F = Pyflakes, I = Isort)
 select = ["E", "F", "I"]
 
-# This part solves your specific problem:
 [tool.ruff.lint.per-file-ignores]
-# Ignore "Unused Import" (F401) specifically in the tests directory
 "tests/*" = ["F401"]
