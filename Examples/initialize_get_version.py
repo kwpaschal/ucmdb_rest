@@ -14,7 +14,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-logger = logging.getLogger("Delete CI example")
+logger = logging.getLogger("Get Version")
 
 def main():
     try:
