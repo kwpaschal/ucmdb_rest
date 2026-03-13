@@ -44,7 +44,7 @@ To help you get started quickly, here are some example standalone scripts
 * **`show_content_packs.py`**: Display current content pack information
 * **`show_license_report.py`**: Display a license report from UCMDB
 
-see [Examplese Documentation](./examples/index.md) for detailed setup and usage.
+see [Examples Documentation](https://kwpaschal.github.io/ucmdb_rest/examples/) for detailed setup and usage.
 ## Functional Modules
 
 The library is organized into specialized modules to mirror the UCMDB API ecosystem:
@@ -69,7 +69,7 @@ The library is organized into specialized modules to mirror the UCMDB API ecosys
 
 ## Documentation
 
-For detailed API references, view our [Interactive Documentation](reference/data_flow_management.md).
+For detailed API references, view our [Interactive Documentation](https://kwpaschal.github.io/ucmdb_rest/reference/data_flow_management/).
 
 ### Documentation Workflow
 The docs are powered by `mkdocs` and `mkdocstrings`.

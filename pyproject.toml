@@ -22,6 +22,7 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/kwpaschal/ucmdb_rest"
+Documentation = "https://kwpaschal.github.io/ucmdb_rest/"
 
 [tool.setuptools.packages.find]
 include = ["ucmdb_rest*"]
