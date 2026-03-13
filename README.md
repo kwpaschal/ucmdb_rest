@@ -86,6 +86,7 @@ pytest --cov=ucmdb_rest
 
 # Preview documentation locally
 mkdocs serve
+```
 
 ## Release History
 
