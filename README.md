@@ -105,7 +105,9 @@ pytest --cov=ucmdb_rest
 
 ## Release History
 
-* **2.0.2 (Current)**
+* **2.0.3 (Current)**
+  * Improved README with badges, Why This Library section, and documentation links
+* **2.0.2**
   * Packaging and metadata updates
 * **2.0.1**
   * Fixed failing tests
